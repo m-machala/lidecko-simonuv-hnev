@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
-    public List<GameObject> groundPrefabs;
+    public List<Tile> groundPrefabs;
     public GroundManager groundManager;
     public Player player;
 

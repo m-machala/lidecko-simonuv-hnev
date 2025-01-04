@@ -167,11 +167,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   groundPrefabs:
-  - {fileID: 3413886839536906890, guid: 8ad06f8db0f41c44d93375873731ee24, type: 3}
-  - {fileID: 3413886839536906890, guid: 1e49f4f3db8c723479e8c7e45b6cdf60, type: 3}
-  - {fileID: 3413886839536906890, guid: 0a065c7018bb32342b883190b9f76232, type: 3}
+  - {fileID: 4503275831232118713, guid: 8ad06f8db0f41c44d93375873731ee24, type: 3}
+  - {fileID: 542990073835070385, guid: 1e49f4f3db8c723479e8c7e45b6cdf60, type: 3}
+  - {fileID: 6559812073336198404, guid: 0a065c7018bb32342b883190b9f76232, type: 3}
   groundManager: {fileID: 1325182641}
-  player: {fileID: 0}
+  player: {fileID: 1922263342}
 --- !u!1 &705507993
 GameObject:
   m_ObjectHideFlags: 0
