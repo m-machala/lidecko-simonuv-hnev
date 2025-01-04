@@ -6,6 +6,7 @@ using UnityEngine;
 public class GroundManager : MonoBehaviour
 {
     private List<GameObject> spawnedTiles = new List<GameObject>();
+    public List<Vector2> occupiedTilePositions = new List<Vector2>();
     private List<Vector2> tilePositions = new List<Vector2>();
     private Quaternion defaultRotation = Quaternion.identity;
     private GameManager gameManager;
