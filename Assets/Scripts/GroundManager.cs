@@ -5,45 +5,22 @@ using UnityEngine;
 
 public class GroundManager : MonoBehaviour
 {
-    public List<GameObject> prefabs;
-    private List<GameObject> spawnedObjects = new List<GameObject>();
-
-    public Quaternion defaultRotation = Quaternion.identity;
-    void Start()
-    {
-        for (int x = -5; x < 5; x++) {
-            for (int z = -5; z < 5; z++) {
-                int randomIndex = UnityEngine.Random.Range(0, prefabs.Count);
-                GameObject newObject = Instantiate(prefabs[randomIndex], new Vector3(x, 0, z), defaultRotation);
-                spawnedObjects.Add(newObject);
-            }
-        }
+    private List<GameObject> spawnedTiles = new List<GameObject>();
+    private List<Vector2> tilePositions = new List<Vector2>();
+    private Quaternion defaultRotation = Quaternion.identity;
+    private GameManager gameManager;
+    public void AddGameManager(GameManager gameManager) {
+        this.gameManager = gameManager;
     }
 
-    float elapsedTime = 0.0f;
-    bool forward = true;
-    GameObject selectedTile = null;
-    Renderer selectedRenderer = null;
-    Color oldColor;
-    void Update() {
-        if (forward) {
-            elapsedTime += Time.deltaTime;
-        }
-        else {
-            elapsedTime -= Time.deltaTime;
-        }
-        
-        if(elapsedTime >= 0.2f && forward) {
-            selectedTile = spawnedObjects[UnityEngine.Random.Range(0, spawnedObjects.Count)];
-            selectedRenderer = selectedTile.GetComponent<Renderer>();
-            oldColor = selectedRenderer.material.color;
-            selectedRenderer.material.color = Color.red;
-            forward = false;
-        }
-
-        if(elapsedTime <= 0.0f && !forward) {
-            selectedRenderer.material.color = oldColor;
-            forward = true;
+    public void SpawnTiles(int xCount, int zCount, List<GameObject> prefabs) {
+        for (int x = 0; x < xCount; x++) {
+            for (int z = 0; z < zCount; z++) {
+                int randomIndex = UnityEngine.Random.Range(0, prefabs.Count);
+                GameObject newObject = Instantiate(prefabs[randomIndex], new Vector3(x, 0, z), defaultRotation);
+                spawnedTiles.Add(newObject);
+                tilePositions.Add(new Vector2(x, z));
+            }
         }
     }
 }
