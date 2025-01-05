@@ -84,4 +84,38 @@ public class GroundManager : MonoBehaviour
 
         return reachableTiles;
     }
+
+    public List<Vector2> FindShortestPath(List<Vector2> reachableTiles, Vector2 start, Vector2 end) {
+        var path = new List<Vector2>();
+        var visited = new HashSet<Vector2>();
+        var queue = new Queue<(Vector2 position, List<Vector2> path)>();
+
+        queue.Enqueue((start, new List<Vector2> { start }));
+        visited.Add(start);
+
+        while (queue.Count > 0) {
+            var (currentPosition, currentPath) = queue.Dequeue();
+
+            if (currentPosition == end) {
+                return currentPath;
+            }
+
+            var neighbors = new List<Vector2> {
+                new Vector2(currentPosition.x + 1, currentPosition.y),
+                new Vector2(currentPosition.x - 1, currentPosition.y),
+                new Vector2(currentPosition.x, currentPosition.y + 1),
+                new Vector2(currentPosition.x, currentPosition.y - 1)
+            };
+
+            foreach (var neighbor in neighbors) {
+                if (reachableTiles.Contains(neighbor) && !visited.Contains(neighbor)) {
+                    var newPath = new List<Vector2>(currentPath) { neighbor };
+                    queue.Enqueue((neighbor, newPath));
+                    visited.Add(neighbor);
+                }
+            }
+        }
+
+        return path;
+    }
 }
