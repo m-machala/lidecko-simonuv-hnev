@@ -9,21 +9,19 @@ public class GameManager : MonoBehaviour
     public GroundManager groundManager;
     public Player player;
 
-    public void Notify(string sender, string message) {
-        if (sender == "GroundManager" && message == "UpdateOccupiedTiles") {
-            groundManager.occupiedTilePositions.Clear();
-            groundManager.occupiedTilePositions.Append(player.GetXZPosition());
-        }
-    }
+    [Range(0, 100)] public int walkDistance = 3;
+
     void Start()
     {
-        groundManager.AddGameManager(this);
-
-        groundManager.SpawnTiles(5, 10, groundPrefabs);
+        groundManager.SpawnTiles(50, 50, groundPrefabs);
     }
 
     void Update()
     {
-        
+        groundManager.UntintAllTiles();
+
+        List<Vector2> reachableTiles = groundManager.FindReachableTiles(player.GetPosition(), new List<Vector2>(), walkDistance);
+
+        groundManager.TintTiles(reachableTiles, Color.blue);
     }
 }

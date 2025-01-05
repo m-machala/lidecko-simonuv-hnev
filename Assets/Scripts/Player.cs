@@ -4,13 +4,13 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-    public Vector3 GetPosition() {
-        return transform.position;
-    }
+    public Vector2 GetPosition() {
+        Vector3 fullPosition = transform.position;
+        Renderer renderer = gameObject.GetComponent<Renderer>();
+        Vector3 size = renderer.bounds.size;
 
-    public Vector2 GetXZPosition() {
-        Vector3 position = GetPosition();
-        Vector2 XZPosition = new Vector2(position.x, position.z);
-        return XZPosition;
+        Vector2 modifiedPosition = new Vector2((int)(fullPosition.x + size.x / 2), (int)(fullPosition.z + size.z / 2));
+
+        return modifiedPosition;
     }
 }

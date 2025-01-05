@@ -1,18 +1,15 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class GroundManager : MonoBehaviour
 {
     private List<Tile> spawnedTiles = new List<Tile>();
-    public List<Vector2> occupiedTilePositions = new List<Vector2>();
     private List<Vector2> tilePositions = new List<Vector2>();
     private Quaternion defaultRotation = Quaternion.identity;
-    private GameManager gameManager;
-    public void AddGameManager(GameManager gameManager) {
-        this.gameManager = gameManager;
-    }
 
     public void SpawnTiles(int xCount, int zCount, List<Tile> prefabs) {
         for (int x = 0; x < xCount; x++) {
@@ -25,10 +22,66 @@ public class GroundManager : MonoBehaviour
         }
     }
 
+    public void DespawnTiles() {
+        for (int i = 0; i < spawnedTiles.Count; i++) {
+            Destroy(spawnedTiles[i]);
+        }
+
+        spawnedTiles.Clear();
+        tilePositions.Clear();
+    }
+
     void Update() {
-        Tile randomTile = spawnedTiles[UnityEngine.Random.Range(0, spawnedTiles.Count)];
-        randomTile.TintTile(new Color(UnityEngine.Random.Range(0f, 1f), UnityEngine.Random.Range(0f, 1f), UnityEngine.Random.Range(0f, 1f)));
-        randomTile = spawnedTiles[UnityEngine.Random.Range(0, spawnedTiles.Count)];
-        randomTile.UntintTile();
+
+    }
+
+    public void UntintAllTiles() {
+        for (int i = 0; i < spawnedTiles.Count; i++) {
+            spawnedTiles[i].UntintTile();
+        }
+    }
+
+    public void TintTile(Vector2 position, Color color) {
+        if (tilePositions.Contains(position)) {
+            spawnedTiles[tilePositions.IndexOf(position)].TintTile(color);
+        }
+    }
+
+    public void TintTiles(List<Vector2> positions, Color color) {
+        for (int i = 0; i < positions.Count; i++) {
+            TintTile(positions[i], color);
+        }
+    }
+
+    public List<Vector2> FindReachableTiles(Vector2 startingPosition, List<Vector2> blockedPositions, int stepCount) {
+        var reachableTiles = new List<Vector2>();
+        var visited = new HashSet<Vector2>();
+        var queue = new Queue<(Vector2 position, int steps)>();
+
+        queue.Enqueue((startingPosition, 0));
+        visited.Add(startingPosition);
+
+        while (queue.Count > 0) {
+            var (currentPosition, currentSteps) = queue.Dequeue();
+
+            if (currentSteps < stepCount) {
+                var neighbors = new List<Vector2> {
+                    new Vector2(currentPosition.x + 1, currentPosition.y),
+                    new Vector2(currentPosition.x - 1, currentPosition.y),
+                    new Vector2(currentPosition.x, currentPosition.y + 1),
+                    new Vector2(currentPosition.x, currentPosition.y - 1)
+                };
+
+                foreach (var neighbor in neighbors) {
+                    if (!visited.Contains(neighbor) && !blockedPositions.Contains(neighbor) && tilePositions.Contains(neighbor)) {
+                        queue.Enqueue((neighbor, currentSteps + 1));
+                        visited.Add(neighbor);
+                        reachableTiles.Add(neighbor);
+                    }
+                }
+            }
+        }
+
+        return reachableTiles;
     }
 }
