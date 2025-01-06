@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using UnityEngine;
 
 public class GameManager : MonoBehaviour
@@ -11,29 +12,42 @@ public class GameManager : MonoBehaviour
 
     [Range(0, 100)] public int walkDistance = 3;
 
-    public void Event(string sender, string message) {
-        ;
+    public void PlayerFinishedMoving() {
+        List<UnityEngine.Vector2> blockedTiles = getBlockedPositions();
+        List<UnityEngine.Vector2> reachableTiles = groundManager.FindReachableTiles(player.GetPosition(), blockedTiles, 3);
+        groundManager.TintTiles(reachableTiles, Color.blue);
+    }
+
+    public void TileClicked(UnityEngine.Vector2 position) {
+        if (!player.moving) {
+            List<UnityEngine.Vector2> blockedTiles = getBlockedPositions();
+            List<UnityEngine.Vector2> reachableTiles = groundManager.FindReachableTiles(player.GetPosition(), blockedTiles, 3);
+            if (reachableTiles.Contains(position)) {
+                var path = groundManager.FindShortestPath(reachableTiles, player.GetPosition(), position);
+                player.Move(path, 0.2f);
+                groundManager.UntintAllTiles();
+            }
+        }
+    }
+
+    List<UnityEngine.Vector2> getBlockedPositions() {
+        List<UnityEngine.Vector2> blockedPositions = new List<UnityEngine.Vector2>
+        {
+            player.GetPosition()
+        };
+        return blockedPositions;
     }
 
     void Start()
     {
+        groundManager.setGameManager(this);
         player.setGameManager(this);
         groundManager.SpawnTiles(50, 50, groundPrefabs);
-        List<Vector2> stepList = new List<Vector2>
-        {
-            new Vector2(0, 0),
-            new Vector2(1, 0),
-            new Vector2(1, 1)
-        };
-        player.Move(stepList, 1);
+        player.moving = true;
     }
 
     void Update()
     {
-        groundManager.UntintAllTiles();
 
-        List<Vector2> reachableTiles = groundManager.FindReachableTiles(player.GetPosition(), new List<Vector2>(), walkDistance);
-
-        groundManager.TintTiles(reachableTiles, Color.blue);
     }
 }

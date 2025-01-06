@@ -9,7 +9,7 @@ public class Player : MonoBehaviour
     GameManager gameManager;
     List<(Vector2, float)> nextPositions = new List<(Vector2, float)>();
     Vector2 previousPosition;
-    bool moving = false;
+    public bool moving = false;
     float elapsedMovementTime = 0f;
 
     public void setGameManager(GameManager gameManager) {
@@ -30,8 +30,6 @@ public class Player : MonoBehaviour
         foreach (Vector2 position in positions) {
             nextPositions.Add((position, stepTime));
         }
-        Debug.Log(positions.Count);
-        Debug.Log(nextPositions.Count);
         previousPosition = GetPosition();
         moving = true;
     }
@@ -39,7 +37,7 @@ public class Player : MonoBehaviour
     void Update() {
         if (nextPositions.Count == 0 && moving) {
             moving = false;
-            gameManager.Event("player", "finished moving");
+            gameManager.PlayerFinishedMoving();
         }
 
         if (nextPositions.Count == 0) {

@@ -10,12 +10,21 @@ public class GroundManager : MonoBehaviour
     private List<Tile> spawnedTiles = new List<Tile>();
     private List<Vector2> tilePositions = new List<Vector2>();
     private Quaternion defaultRotation = Quaternion.identity;
+    private GameManager gameManager;
 
+    public void setGameManager(GameManager gameManager) {
+        this.gameManager = gameManager;
+    }
+
+    public void TileClicked(Vector2 position) {
+        gameManager.TileClicked(position);
+    }
     public void SpawnTiles(int xCount, int zCount, List<Tile> prefabs) {
         for (int x = 0; x < xCount; x++) {
             for (int z = 0; z < zCount; z++) {
                 int randomIndex = UnityEngine.Random.Range(0, prefabs.Count);
                 Tile newObject = Instantiate(prefabs[randomIndex], new Vector3(x, 0, z), defaultRotation);
+                newObject.setGroundManager(this);
                 spawnedTiles.Add(newObject);
                 tilePositions.Add(new Vector2(x, z));
             }
