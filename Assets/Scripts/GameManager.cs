@@ -3,12 +3,22 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using UnityEngine;
+using UnityEngine.Scripting;
 
 public class GameManager : MonoBehaviour
 {
+    enum GameState {
+        PlayerDeciding,
+        PlayerAction,
+        EnemyAction
+    }
+
+    GameState gameState = GameState.PlayerDeciding;
+
     public List<Tile> groundPrefabs;
     public GroundManager groundManager;
     public Character player;
+    List<Character> enemies = new List<Character>();
 
     [Range(0, 100)] public int walkDistance = 5;
 
@@ -40,6 +50,8 @@ public class GameManager : MonoBehaviour
 
     void Start()
     {
+        
+        
         groundManager.setGameManager(this);
         player.setGameManager(this);
         groundManager.SpawnTiles(50, 50, groundPrefabs);
@@ -48,6 +60,15 @@ public class GameManager : MonoBehaviour
 
     void Update()
     {
+        switch (gameState) {
+            case GameState.PlayerDeciding:
+            break;
 
+            case GameState.PlayerAction:
+            break;
+
+            case GameState.EnemyAction:
+            break;
+        }
     }
 }
