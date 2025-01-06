@@ -4,7 +4,7 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-public class Player : MonoBehaviour
+public class Character : MonoBehaviour
 {
     GameManager gameManager;
     List<(Vector2, float)> nextPositions = new List<(Vector2, float)>();
@@ -37,7 +37,7 @@ public class Player : MonoBehaviour
     void Update() {
         if (nextPositions.Count == 0 && moving) {
             moving = false;
-            gameManager.PlayerFinishedMoving();
+            gameManager.FinishedMoving();
         }
 
         if (nextPositions.Count == 0) {

@@ -8,20 +8,20 @@ public class GameManager : MonoBehaviour
 {
     public List<Tile> groundPrefabs;
     public GroundManager groundManager;
-    public Player player;
+    public Character player;
 
-    [Range(0, 100)] public int walkDistance = 3;
+    [Range(0, 100)] public int walkDistance = 5;
 
-    public void PlayerFinishedMoving() {
+    public void FinishedMoving() {
         List<UnityEngine.Vector2> blockedTiles = getBlockedPositions();
-        List<UnityEngine.Vector2> reachableTiles = groundManager.FindReachableTiles(player.GetPosition(), blockedTiles, 3);
+        List<UnityEngine.Vector2> reachableTiles = groundManager.FindReachableTiles(player.GetPosition(), blockedTiles, walkDistance);
         groundManager.TintTiles(reachableTiles, Color.blue);
     }
 
     public void TileClicked(UnityEngine.Vector2 position) {
         if (!player.moving) {
             List<UnityEngine.Vector2> blockedTiles = getBlockedPositions();
-            List<UnityEngine.Vector2> reachableTiles = groundManager.FindReachableTiles(player.GetPosition(), blockedTiles, 3);
+            List<UnityEngine.Vector2> reachableTiles = groundManager.FindReachableTiles(player.GetPosition(), blockedTiles, walkDistance);
             if (reachableTiles.Contains(position)) {
                 var path = groundManager.FindShortestPath(reachableTiles, player.GetPosition(), position);
                 player.Move(path, 0.2f);
@@ -33,7 +33,7 @@ public class GameManager : MonoBehaviour
     List<UnityEngine.Vector2> getBlockedPositions() {
         List<UnityEngine.Vector2> blockedPositions = new List<UnityEngine.Vector2>
         {
-            player.GetPosition()
+            player.GetPosition(),
         };
         return blockedPositions;
     }
