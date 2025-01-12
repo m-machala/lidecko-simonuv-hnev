@@ -18,7 +18,7 @@ public class GameManager : MonoBehaviour
     public List<Tile> groundPrefabs;
     public GroundManager groundManager;
     public Character player;
-    List<Character> enemies = new List<Character>();
+    public List<Character> enemies = new List<Character>();
 
     [Range(0, 100)] public int walkDistance = 5;
 
@@ -45,13 +45,16 @@ public class GameManager : MonoBehaviour
         {
             player.GetPosition(),
         };
+
+        foreach (Character enemy in enemies) {
+            blockedPositions.Add(enemy.GetPosition());
+        }
+
         return blockedPositions;
     }
 
     void Start()
     {
-        
-        
         groundManager.setGameManager(this);
         player.setGameManager(this);
         groundManager.SpawnTiles(50, 50, groundPrefabs);
