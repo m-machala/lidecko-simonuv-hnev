@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Xml;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -126,5 +127,23 @@ public class GroundManager : MonoBehaviour
         }
 
         return path;
+    }
+
+    public List<Vector2> FindTilesInDirection(List<Vector2> reachableTiles, List<Vector2> blockedTiles, Vector2 start, Vector2 directionVector) {
+        List<Vector2> output = new List<Vector2>();
+
+        Vector2 currentPosition = start;
+
+        while (true) {
+            currentPosition += directionVector;
+            if (reachableTiles.Contains(currentPosition) && !blockedTiles.Contains(currentPosition)) {
+                output.Add(currentPosition);
+            }
+            else {
+                break;
+            }
+        }
+
+        return output;
     }
 }

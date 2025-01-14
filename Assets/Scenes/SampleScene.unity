@@ -269,7 +269,7 @@ Transform:
   m_GameObject: {fileID: 554430900}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0.62}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -293,6 +293,8 @@ MonoBehaviour:
   - {fileID: 6559812073336198404, guid: 0a065c7018bb32342b883190b9f76232, type: 3}
   groundManager: {fileID: 1325182641}
   player: {fileID: 1922263342}
+  enemies:
+  - {fileID: 164898458}
   walkDistance: 3
 --- !u!1 &705507993
 GameObject:
@@ -474,7 +476,7 @@ Transform:
   m_GameObject: {fileID: 963194225}
   serializedVersion: 2
   m_LocalRotation: {x: 0.35791802, y: -0, z: -0, w: 0.933753}
-  m_LocalPosition: {x: 4.86, y: 3.94, z: 1.26}
+  m_LocalPosition: {x: 4.86, y: 3.94, z: -2.18}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

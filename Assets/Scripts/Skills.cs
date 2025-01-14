@@ -57,8 +57,4 @@ public class Skills : MonoBehaviour
             mana -= healCost;
         }
     }
-
-
-
-
 }
