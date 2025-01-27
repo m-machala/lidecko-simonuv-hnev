@@ -23,6 +23,8 @@ public class Skills : MonoBehaviour
     public int boltDamage = 3;
     public int boltCost = 4;
 
+    public AttackMode attackMode = AttackMode.Melee;
+
     public void turnEnder() {
         mana = Math.Min(manaRegen + mana, maxMana);
     }
@@ -56,5 +58,17 @@ public class Skills : MonoBehaviour
             health += healStrength;
             mana -= healCost;
         }
+    }
+
+    public enum AttackMode
+    {
+        Melee,
+        Ranged
+    }
+
+    public void ToggleAttackMode()
+    {
+        attackMode = (attackMode == AttackMode.Melee) ? AttackMode.Ranged : AttackMode.Melee;
+        Debug.Log("Attack mode switched to: " + attackMode);
     }
 }

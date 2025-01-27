@@ -82,13 +82,37 @@ public class GroundManager : MonoBehaviour
                     new Vector2(currentPosition.x, currentPosition.y - 1)
                 };
 
-                foreach (var neighbor in neighbors) {
-                    if (!visited.Contains(neighbor) && !blockedPositions.Contains(neighbor) && tilePositions.Contains(neighbor)) {
-                        queue.Enqueue((neighbor, currentSteps + 1));
-                        visited.Add(neighbor);
-                        reachableTiles.Add(neighbor);
+                if(gameManager.gameState == GameManager.GameState.PlayerMoving)
+                {
+                    foreach (var neighbor in neighbors)
+                    {
+                        if (!visited.Contains(neighbor) && !blockedPositions.Contains(neighbor) && tilePositions.Contains(neighbor))
+                        {
+                            queue.Enqueue((neighbor, currentSteps + 1));
+                            visited.Add(neighbor);
+                            reachableTiles.Add(neighbor);
+                        }
                     }
+                }else if (gameManager.gameState == GameManager.GameState.PlayerAction)
+                {
+                    foreach (var neighbor in neighbors)
+                    {
+                        if (!visited.Contains(neighbor) && !blockedPositions.Contains(neighbor) && tilePositions.Contains(neighbor))
+                        {
+                            Debug.Log(neighbor);
+                            queue.Enqueue((neighbor, currentSteps + 1));
+                            visited.Add(neighbor);
+                            reachableTiles.Add(neighbor);
+                        }
+                    }
+                    List<UnityEngine.Vector2> allowed = new List<UnityEngine.Vector2> { };
+                    foreach (Character enemy in gameManager.enemies)
+                    {
+                        allowed.Add(enemy.GetPosition());
+                    }
+                    reachableTiles = reachableTiles.Intersect(allowed).ToList();
                 }
+                
             }
         }
 
