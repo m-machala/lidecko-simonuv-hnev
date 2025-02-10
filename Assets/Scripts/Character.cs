@@ -54,4 +54,8 @@ public class Character : MonoBehaviour
         }
         transform.position = Vector3.Lerp(new Vector3(previousPosition.x, transform.position.y, previousPosition.y), new Vector3(nextPositions[0].Item1.x, transform.position.y, nextPositions[0].Item1.y), elapsedMovementTime / (nextPositions[0].Item2 * travelDistance));    
     }
+    void OnMouseDown()
+    {
+        gameManager.TileClicked(new Vector2((int)transform.position.x, (int)transform.position.z));
+    }
 }
