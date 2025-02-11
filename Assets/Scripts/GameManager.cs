@@ -11,6 +11,7 @@ public class GameManager : MonoBehaviour
     public enum GameState {
         PlayerMoving,
         PlayerAction,
+        EnemyMoving,
         EnemyAction
     }
 
@@ -28,7 +29,7 @@ public class GameManager : MonoBehaviour
         FightRange();
     }
 
-    public void FinishedAction()
+    public void ReadyToMove()
     {
         List<UnityEngine.Vector2> blockedTiles = getBlockedPositions();
         List<UnityEngine.Vector2> reachableTiles = groundManager.FindReachableTiles(player.GetPosition(), blockedTiles, walkDistance);
@@ -47,7 +48,7 @@ public class GameManager : MonoBehaviour
         Debug.Log(attack);
         if (player.GetComponent<Skills>().attackMode == AttackMode.Melee)
         {
-            reachableTiles = groundManager.FindReachableTiles(player.GetPosition(), blockedTiles, 1); // p¯edÏlat blocked tiles??? ProË jsem sem dal tu pozn·mku? Vûdyù to funguje?
+            reachableTiles = groundManager.FindReachableTiles(player.GetPosition(), blockedTiles, 1); // pÔøΩedÔøΩlat blocked tiles??? ProÔøΩ jsem sem dal tu poznÔøΩmku? VÔøΩdyÔøΩ to funguje?
         }
         else
         {
@@ -88,8 +89,7 @@ public class GameManager : MonoBehaviour
             if (reachableTiles.Contains(position))
             {
                 groundManager.UntintAllTiles();
-                gameState = GameState.PlayerMoving;
-                FinishedAction();
+                gameState = GameState.EnemyMoving;
             }
         }
         Debug.Log(gameState);
@@ -116,51 +116,52 @@ public class GameManager : MonoBehaviour
         player.moving = true;
         player.gameObject.AddComponent<Skills>();
         foreach (Character enemy in enemies) { enemy.setGameManager(this); }
-        //FinishedAction();    z nÏjakÈho d˘vodu to hodÌ permatint?
+        Invoke("ReadyToMove", 1f);
     }
 
     void Update()
     {
         switch (gameState) {
             case GameState.PlayerMoving:
+            if (Input.GetKeyDown(KeyCode.Backspace) && gameState == GameState.PlayerMoving)
+            { // Skip pohybu
+                Debug.Log("clicledus");
+                groundManager.UntintAllTiles();
+                gameState = GameState.PlayerAction;
+                FightRange();
+                FinishedMoving();
+                Debug.Log(gameState);
+        }   
             break;
 
             case GameState.PlayerAction:
+            if (Input.GetKeyDown(KeyCode.Tab))
+            { // P≈ôepnut√≠ re≈æimu boje
+                player.GetComponent<Skills>().ToggleAttackMode();
+                groundManager.UntintAllTiles();
+                FightRange();
+            }
+
+            if (Input.GetKeyDown(KeyCode.Backspace))
+            { // Skip reÔøΩimu boje
+                Debug.Log("Clicked");
+                groundManager.UntintAllTiles();
+                gameState = GameState.EnemyMoving;
+                Debug.Log(gameState);
+            }
+            break;
+
+            case GameState.EnemyMoving:
             break;
 
             case GameState.EnemyAction:
             break;
         }
 
-        if (Input.GetKeyDown(KeyCode.Tab) && gameState == GameState.PlayerAction)
-        { // P¯epnutÌ reûimu boje
-            player.GetComponent<Skills>().ToggleAttackMode();
-            groundManager.UntintAllTiles();
-            FightRange();
-        }
 
 
-        //TODO: Tu jsem se snaûil implementovat ten skip akce/pohybu pomocÌ backspace. Nefunguje. Dont know why. Jdu sp·t GL kdokoliv na to bude koukat.
-        /*if (Input.GetKeyDown(KeyCode.Backspace) && gameState == GameState.PlayerAction)
-        { // Skip reûimu boje
-            //groundManager.UntintAllTiles();
-            //FightRange();
-            Debug.Log("Clicked");
-            groundManager.UntintAllTiles();
-            gameState = GameState.PlayerMoving;
-            //FinishedAction();
-            Debug.Log(gameState);
-        }
+        
 
-        if (Input.GetKeyDown(KeyCode.Backspace) && gameState == GameState.PlayerMoving)
-        { // Skip pohybu
-            //groundManager.UntintAllTiles();
-            //FightRange();
-            Debug.Log("clicledus");
-            groundManager.UntintAllTiles();
-            gameState = GameState.PlayerAction;
-            FinishedMoving();
-            Debug.Log(gameState);
-        }*/
+        
     }
 }

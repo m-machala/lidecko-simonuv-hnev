@@ -41,10 +41,6 @@ public class GroundManager : MonoBehaviour
         tilePositions.Clear();
     }
 
-    void Update() {
-
-    }
-
     public void UntintAllTiles() {
         for (int i = 0; i < spawnedTiles.Count; i++) {
             spawnedTiles[i].UntintTile();
