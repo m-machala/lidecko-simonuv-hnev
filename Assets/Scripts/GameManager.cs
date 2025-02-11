@@ -118,6 +118,10 @@ public class GameManager : MonoBehaviour
 
         foreach (var enemy in enemies) {
             blockedPositions.Add(enemy.Item1.GetPosition());
+            
+            if (enemy.Item1.nextPositions.Count > 0) {
+                blockedPositions.Add(enemy.Item1.nextPositions.Last().Item1);
+            }
         }
 
         return blockedPositions;
@@ -132,6 +136,10 @@ public class GameManager : MonoBehaviour
         
         // TODO: implement enemy loading from a list of positions
         var testEnemy = Instantiate(meleeEnemyPrefab, new UnityEngine.Vector3(3f, 1.2f, 3f), UnityEngine.Quaternion.identity);
+        enemies.Add((testEnemy.GetComponent<Character>(), testEnemy.GetComponent<EnemyAI>()));
+        testEnemy = Instantiate(meleeEnemyPrefab, new UnityEngine.Vector3(1f, 1.2f, 6f), UnityEngine.Quaternion.identity);
+        enemies.Add((testEnemy.GetComponent<Character>(), testEnemy.GetComponent<EnemyAI>()));
+        testEnemy = Instantiate(meleeEnemyPrefab, new UnityEngine.Vector3(4f, 1.2f, 5f), UnityEngine.Quaternion.identity);
         enemies.Add((testEnemy.GetComponent<Character>(), testEnemy.GetComponent<EnemyAI>()));
 
         foreach (var enemy in enemies) { enemy.Item1.setGameManager(this); }
@@ -190,11 +198,6 @@ public class GameManager : MonoBehaviour
             ReadyToMove();
             break;
         }
-
-
-
-        
-
-        
+  
     }
 }
