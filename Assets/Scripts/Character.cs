@@ -6,7 +6,7 @@ using UnityEngine.UIElements;
 
 public class Character : MonoBehaviour
 {
-    GameManager gameManager;
+    public GameManager gameManager;
     List<(Vector2, float)> nextPositions = new List<(Vector2, float)>();
     Vector2 previousPosition;
     public bool moving = false;

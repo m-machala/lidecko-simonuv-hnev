@@ -17,16 +17,21 @@ public class GameManager : MonoBehaviour
 
     public GameState gameState = GameState.PlayerMoving;
 
+    public GameObject meleeEnemyPrefab;
+
     public List<Tile> groundPrefabs;
     public GroundManager groundManager;
     public Character player;
-    public List<Character> enemies = new List<Character>();
+    public List<(Character, EnemyAI)> enemies = new List<(Character, EnemyAI)>();
 
     [Range(0, 100)] public int walkDistance = 5;
 
     public void FinishedMoving() {
-        groundManager.UntintAllTiles();
-        FightRange();
+        if (gameState == GameState.PlayerMoving) {
+            groundManager.UntintAllTiles();
+            FightRange();
+            gameState = GameState.PlayerAction;
+        }
     }
 
     public void ReadyToMove()
@@ -34,6 +39,16 @@ public class GameManager : MonoBehaviour
         List<UnityEngine.Vector2> blockedTiles = getBlockedPositions();
         List<UnityEngine.Vector2> reachableTiles = groundManager.FindReachableTiles(player.GetPosition(), blockedTiles, walkDistance);
         groundManager.TintTiles(reachableTiles, Color.blue);
+    }
+
+    public void ActionComplete() {
+        gameState = GameState.EnemyMoving;
+        Debug.Log("Enemies moving");
+
+        foreach (var enemy in enemies) {
+            Debug.Log("Move enemy");
+            enemy.Item2.move();
+        }
     }
 
     public void FightRange()
@@ -89,20 +104,20 @@ public class GameManager : MonoBehaviour
             if (reachableTiles.Contains(position))
             {
                 groundManager.UntintAllTiles();
-                gameState = GameState.EnemyMoving;
+                ActionComplete();
             }
         }
         Debug.Log(gameState);
     }
 
-    List<UnityEngine.Vector2> getBlockedPositions() {
+    public List<UnityEngine.Vector2> getBlockedPositions() {
         List<UnityEngine.Vector2> blockedPositions = new List<UnityEngine.Vector2>
         {
             player.GetPosition(),
         };
 
-        foreach (Character enemy in enemies) {
-            blockedPositions.Add(enemy.GetPosition());
+        foreach (var enemy in enemies) {
+            blockedPositions.Add(enemy.Item1.GetPosition());
         }
 
         return blockedPositions;
@@ -113,9 +128,13 @@ public class GameManager : MonoBehaviour
         groundManager.setGameManager(this);
         player.setGameManager(this);
         groundManager.SpawnTiles(50, 50, groundPrefabs);
-        player.moving = true;
         player.gameObject.AddComponent<Skills>();
-        foreach (Character enemy in enemies) { enemy.setGameManager(this); }
+        
+        // TODO: implement enemy loading from a list of positions
+        var testEnemy = Instantiate(meleeEnemyPrefab, new UnityEngine.Vector3(3f, 1.2f, 3f), UnityEngine.Quaternion.identity);
+        enemies.Add((testEnemy.GetComponent<Character>(), testEnemy.GetComponent<EnemyAI>()));
+
+        foreach (var enemy in enemies) { enemy.Item1.setGameManager(this); }
         Invoke("ReadyToMove", 1f);
     }
 
@@ -127,7 +146,6 @@ public class GameManager : MonoBehaviour
             { // Skip pohybu
                 Debug.Log("clicledus");
                 groundManager.UntintAllTiles();
-                gameState = GameState.PlayerAction;
                 FightRange();
                 FinishedMoving();
                 Debug.Log(gameState);
@@ -146,15 +164,30 @@ public class GameManager : MonoBehaviour
             { // Skip re�imu boje
                 Debug.Log("Clicked");
                 groundManager.UntintAllTiles();
-                gameState = GameState.EnemyMoving;
                 Debug.Log(gameState);
+                ActionComplete();
             }
             break;
 
             case GameState.EnemyMoving:
+            bool enemiesFinishedMoving = true;
+
+            foreach (var enemy in enemies) {
+                if (enemy.Item1.moving) {
+                    enemiesFinishedMoving = false;
+                    break;
+                }
+            }
+
+            if (enemiesFinishedMoving) {
+                Debug.Log("Enemy action");
+                gameState = GameState.EnemyAction;
+            }
             break;
 
             case GameState.EnemyAction:
+            gameState = GameState.PlayerMoving;
+            ReadyToMove();
             break;
         }
 

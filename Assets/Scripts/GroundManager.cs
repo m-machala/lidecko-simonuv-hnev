@@ -78,7 +78,7 @@ public class GroundManager : MonoBehaviour
                     new Vector2(currentPosition.x, currentPosition.y - 1)
                 };
 
-                if(gameManager.gameState == GameManager.GameState.PlayerMoving)
+                if(gameManager.gameState == GameManager.GameState.PlayerMoving || gameManager.gameState == GameManager.GameState.EnemyMoving)
                 {
                     foreach (var neighbor in neighbors)
                     {
@@ -89,7 +89,7 @@ public class GroundManager : MonoBehaviour
                             reachableTiles.Add(neighbor);
                         }
                     }
-                }else if (gameManager.gameState == GameManager.GameState.PlayerAction)
+                }else if (gameManager.gameState == GameManager.GameState.PlayerAction || gameManager.gameState == GameManager.GameState.EnemyAction)
                 {
                     foreach (var neighbor in neighbors)
                     {
@@ -102,9 +102,9 @@ public class GroundManager : MonoBehaviour
                         }
                     }
                     List<UnityEngine.Vector2> allowed = new List<UnityEngine.Vector2> { };
-                    foreach (Character enemy in gameManager.enemies)
+                    foreach (var enemy in gameManager.enemies)
                     {
-                        allowed.Add(enemy.GetPosition());
+                        allowed.Add(enemy.Item1.GetPosition());
                     }
                     reachableTiles = reachableTiles.Intersect(allowed).ToList();
                 }
