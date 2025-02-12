@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class MeleeEnemy : MonoBehaviour, EnemyAI
 {
-    int movementRange = 3;
+    int movementRange = 2;
     float randomMovementChance = 0.25f;
     public void move()
     {
@@ -45,6 +45,12 @@ public class MeleeEnemy : MonoBehaviour, EnemyAI
     }
     public void attack()
     {
+        var character = GetComponent<Character>();
+        var gameManager = character.gameManager;
+        
+        if (Vector2.Distance(character.GetPosition(), gameManager.player.GetPosition()) <= 1) {
+            GetComponent<Skills>().meleeAttack(gameManager.player.GetComponent<Skills>());
+        }
 
     }
 

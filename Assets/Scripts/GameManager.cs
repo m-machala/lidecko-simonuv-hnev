@@ -13,7 +13,8 @@ public class GameManager : MonoBehaviour
         PlayerMoving,
         PlayerAction,
         EnemyMoving,
-        EnemyAction
+        EnemyAction,
+        GameOver
     }
 
     public GameState gameState = GameState.PlayerMoving;
@@ -327,6 +328,16 @@ public class GameManager : MonoBehaviour
             if (enemiesFinishedMoving) {
                 Debug.Log("Enemy action");
                 gameState = GameState.EnemyAction;
+
+                foreach (var enemy in enemies) {
+                    enemy.Item2.attack();
+                    Debug.Log(player.GetComponent<Skills>().health);
+                    enemy.Item3.turnEnder();
+                }
+                if (player.GetComponent<Skills>().health <= 0) {
+                    Debug.Log("Game over");
+                    gameState = GameState.GameOver;
+                }
             }
             break;
 

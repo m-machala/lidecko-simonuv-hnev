@@ -13,8 +13,8 @@ GameObject:
   - component: {fileID: 4604768908194896091}
   - component: {fileID: 8029439042143576131}
   - component: {fileID: 6384528881363419768}
-  - component: {fileID: 4824192669771466057}
   - component: {fileID: 5883884797403038272}
+  - component: {fileID: -3274421524184992332}
   m_Layer: 0
   m_Name: Melee Enemy
   m_TagString: Untagged
@@ -126,18 +126,6 @@ MonoBehaviour:
   gameManager: {fileID: 0}
   animator: {fileID: 0}
   moving: 0
---- !u!114 &4824192669771466057
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8870016961608037706}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 02b3f17c3dbff3543afff7903085a498, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &5883884797403038272
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -166,6 +154,18 @@ MonoBehaviour:
   boltDamage: 3
   boltCost: 4
   attackMode: 0
+--- !u!114 &-3274421524184992332
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8870016961608037706}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 02b3f17c3dbff3543afff7903085a498, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &2776779367541977568
 PrefabInstance:
   m_ObjectHideFlags: 0
