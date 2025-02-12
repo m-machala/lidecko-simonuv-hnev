@@ -5,6 +5,8 @@ using UnityEngine;
 
 public class Skills : MonoBehaviour
 {
+    public int meleeDamage = 7;
+
     public int maxMana = 10;
     public int mana = 10;
     public int manaRegen = 1;
@@ -17,7 +19,8 @@ public class Skills : MonoBehaviour
     public float arrowHitChance = 0.95f;
     public int arrowDamage = 5;
 
-    public int fireballDamage = 10;
+    public int fireballMainDamage = 10;
+    public int fireballSurroundingDamage = 5;
     public int fireballCost = 5;
 
     public int boltDamage = 3;
@@ -29,18 +32,23 @@ public class Skills : MonoBehaviour
         mana = Math.Min(manaRegen + mana, maxMana);
     }
 
+    public void meleeAttack(Skills target) {
+        target.health -= meleeDamage;
+    }
+
     public void arrowAttack(Skills target) {
         if (UnityEngine.Random.Range(0f, 1f) <= arrowHitChance) {
             target.health -= arrowDamage;
         }
     }
 
-    public void fireballAttack(List<Skills> targets) {
+    public void fireballAttack(Skills mainTarget, List<Skills> surroundingTargets) {
         if (mana >= fireballCost) {
             mana -= fireballCost;
-            foreach (Skills target in targets) {
-                target.health -= fireballDamage;
+            foreach (Skills target in surroundingTargets) {
+                target.health -= fireballSurroundingDamage;
             }
+            mainTarget.health -= fireballMainDamage;
         }
     }
 

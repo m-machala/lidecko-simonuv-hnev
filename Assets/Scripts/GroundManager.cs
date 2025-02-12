@@ -186,7 +186,7 @@ public class GroundManager : MonoBehaviour
         {
             allowed.Add(enemy.Item1.GetPosition());
         }
-        //surroundingTiles = surroundingTiles.Intersect(allowed).ToList();
+        surroundingTiles = surroundingTiles.Intersect(allowed).ToList();
 
         return surroundingTiles;
     }

@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.Scripting;
 using static Skills;
@@ -22,7 +23,7 @@ public class GameManager : MonoBehaviour
     public List<Tile> groundPrefabs;
     public GroundManager groundManager;
     public Character player;
-    public List<(Character, EnemyAI)> enemies = new List<(Character, EnemyAI)>();
+    public List<(Character, EnemyAI, Skills)> enemies = new List<(Character, EnemyAI, Skills)>();
 
     [Range(0, 100)] public int walkDistance = 5;
 
@@ -36,6 +37,8 @@ public class GameManager : MonoBehaviour
 
     public void ReadyToMove()
     {
+        var playerSkills = player.GetComponent<Skills>();
+        playerSkills.turnEnder();
         List<UnityEngine.Vector2> blockedTiles = getBlockedPositions();
         List<UnityEngine.Vector2> reachableTiles = groundManager.FindReachableTiles(player.GetPosition(), blockedTiles, walkDistance);
         groundManager.TintTiles(reachableTiles, Color.blue);
@@ -46,6 +49,12 @@ public class GameManager : MonoBehaviour
         Debug.Log("Enemies moving");
 
         foreach (var enemy in enemies) {
+            if (enemy.Item3.health <= 0) {
+                Debug.Log("Enemy died");
+                Destroy(enemy.Item1.gameObject);
+                enemies.Remove(enemy);
+                continue;
+            }
             Debug.Log("Move enemy");
             enemy.Item2.move();
         }
@@ -100,43 +109,122 @@ public class GameManager : MonoBehaviour
         }
         else if(!player.moving && gameState == GameState.PlayerAction)
         {
-            List<UnityEngine.Vector2> blockedTiles = new List<UnityEngine.Vector2>
-            {
-                player.GetPosition(),
-            };
             List<UnityEngine.Vector2> reachableTiles;
+            
+            var playerSkills = player.GetComponent<Skills>();
+            var attackMode = playerSkills.attackMode;
 
-            if (player.GetComponent<Skills>().attackMode == AttackMode.Melee)
-            {
-                //reachableTiles = groundManager.FindReachableTiles(player.GetPosition(), blockedTiles, 1);
+            switch (attackMode) {
+                case AttackMode.Melee:
                 reachableTiles = groundManager.GetSurroundingTiles(player.GetPosition(), 1);
-            }
-            else if(player.GetComponent<Skills>().attackMode == AttackMode.Ranged)
-            {
-                //reachableTiles = groundManager.FindReachableTiles(player.GetPosition(), blockedTiles, 3);
+                break;
+
+                case AttackMode.Ranged:
                 reachableTiles = groundManager.GetSurroundingTiles(player.GetPosition(), 3);
-            }
-            else if(player.GetComponent<Skills>().attackMode == AttackMode.Fireball)
-            {
+                break;
+
+                case AttackMode.Fireball:
                 reachableTiles = groundManager.GetSurroundingTiles(player.GetPosition(), 5);
-            }
-            else if (player.GetComponent<Skills>().attackMode == AttackMode.Bolt)
-            {
+                break;
+
+                case AttackMode.Bolt:
                 reachableTiles = groundManager.GetSurroundingTiles(player.GetPosition(), 2);
-            }
-            else
-            {
+                break;
+
+                default:
                 reachableTiles = new List<UnityEngine.Vector2> { player.GetPosition() };
+                break;
             }
+
 
             if (reachableTiles.Contains(position))
             {
                 groundManager.UntintAllTiles();
+
+                switch (attackMode) {
+                    case AttackMode.Melee:
+                    foreach (var enemy in enemies) {
+                        if (enemy.Item1.GetPosition() == position) {
+                            playerSkills.meleeAttack(enemy.Item3);
+                        }
+                    }
+                    break;
+
+                    case AttackMode.Ranged:
+                    foreach (var enemy in enemies) {
+                        if (enemy.Item1.GetPosition() == position) {
+                            playerSkills.arrowAttack(enemy.Item3);
+                        }
+                    }
+                    break;
+
+                    case AttackMode.Fireball:
+                    if (playerSkills.mana < playerSkills.fireballCost) return;
+                    var fireballTargetTiles = groundManager.GetSurroundingTiles(position, 3);
+                    Skills mainTarget = null;
+                    List<Skills> surroundingTargets = new List<Skills>();
+
+                    foreach (var enemy in enemies) {
+                        if (enemy.Item1.GetPosition() == position) {
+                            mainTarget = enemy.Item3;
+                        }
+                        else {
+                            if (fireballTargetTiles.Contains(enemy.Item1.GetPosition())) {
+                                surroundingTargets.Add(enemy.Item3);
+                            }
+                        }
+                    }
+
+                    if (mainTarget != null) {
+                        playerSkills.fireballAttack(mainTarget, surroundingTargets);
+                    }
+                    break;
+
+                    case AttackMode.Bolt:
+                    if (playerSkills.mana < playerSkills.boltCost) return;
+                    List<UnityEngine.Vector2> hitPositions = new List<UnityEngine.Vector2>();
+                    hitPositions.Add(position);
+
+                    while (true) {
+                        if (UnityEngine.Random.Range(0, 1) > 0.3) {
+                            break;
+                        }
+
+                        var positionCandidates = groundManager.GetSurroundingTiles(hitPositions.Last(), 3);
+                        var selectedCandidate = positionCandidates[UnityEngine.Random.Range(0, positionCandidates.Count)];
+
+                        if (hitPositions.Contains(selectedCandidate)) {
+                            break;
+                        }
+
+                        hitPositions.Add(selectedCandidate);
+                    }
+
+
+                    List<Skills> targets = new List<Skills>();
+                    foreach (var enemy in enemies) {
+                        if (hitPositions.Contains(enemy.Item1.GetPosition())) {
+                            targets.Add(enemy.Item3);
+                        }
+                    }
+
+                    playerSkills.boltAttack(targets);
+                    break;
+
+                    default:
+                    if (playerSkills.mana < playerSkills.healCost) return;
+                    playerSkills.heal();
+                    break;
+                }
+                Debug.Log(playerSkills.maxMana);
+                Debug.Log(playerSkills.mana);
                 ActionComplete();
             }
         }
         Debug.Log(gameState);
     }
+
+
 
     public List<UnityEngine.Vector2> getBlockedPositions() {
         List<UnityEngine.Vector2> blockedPositions = new List<UnityEngine.Vector2>
@@ -164,11 +252,11 @@ public class GameManager : MonoBehaviour
         
         // TODO: implement enemy loading from a list of positions
         var testEnemy = Instantiate(meleeEnemyPrefab, new UnityEngine.Vector3(3f, 1.2f, 3f), UnityEngine.Quaternion.identity);
-        enemies.Add((testEnemy.GetComponent<Character>(), testEnemy.GetComponent<EnemyAI>()));
+        enemies.Add((testEnemy.GetComponent<Character>(), testEnemy.GetComponent<EnemyAI>(), testEnemy.GetComponent<Skills>()));
         testEnemy = Instantiate(meleeEnemyPrefab, new UnityEngine.Vector3(1f, 1.2f, 6f), UnityEngine.Quaternion.identity);
-        enemies.Add((testEnemy.GetComponent<Character>(), testEnemy.GetComponent<EnemyAI>()));
+        enemies.Add((testEnemy.GetComponent<Character>(), testEnemy.GetComponent<EnemyAI>(), testEnemy.GetComponent<Skills>()));
         testEnemy = Instantiate(meleeEnemyPrefab, new UnityEngine.Vector3(4f, 1.2f, 5f), UnityEngine.Quaternion.identity);
-        enemies.Add((testEnemy.GetComponent<Character>(), testEnemy.GetComponent<EnemyAI>()));
+        enemies.Add((testEnemy.GetComponent<Character>(), testEnemy.GetComponent<EnemyAI>(), testEnemy.GetComponent<Skills>()));
 
         foreach (var enemy in enemies) { enemy.Item1.setGameManager(this); }
         Invoke("ReadyToMove", 1f);
