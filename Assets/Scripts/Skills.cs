@@ -63,12 +63,32 @@ public class Skills : MonoBehaviour
     public enum AttackMode
     {
         Melee,
-        Ranged
+        Ranged,
+        Fireball,
+        Bolt,
+        Heal,
     }
 
     public void ToggleAttackMode()
     {
         attackMode = (attackMode == AttackMode.Melee) ? AttackMode.Ranged : AttackMode.Melee;
+        Debug.Log("Attack mode switched to: " + attackMode);
+    }
+    public void ToggleFireball()
+    {
+        attackMode = AttackMode.Fireball;
+        Debug.Log("Attack mode switched to: " + attackMode);
+    }
+
+    public void ToggleBolt()
+    {
+        attackMode = AttackMode.Bolt;
+        Debug.Log("Attack mode switched to: " + attackMode);
+    }
+
+    public void ToggleHeal()
+    {
+        attackMode = AttackMode.Heal;
         Debug.Log("Attack mode switched to: " + attackMode);
     }
 }

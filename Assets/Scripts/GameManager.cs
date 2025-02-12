@@ -63,11 +63,25 @@ public class GameManager : MonoBehaviour
         Debug.Log(attack);
         if (player.GetComponent<Skills>().attackMode == AttackMode.Melee)
         {
-            reachableTiles = groundManager.FindReachableTiles(player.GetPosition(), blockedTiles, 1); // p�ed�lat blocked tiles??? Pro� jsem sem dal tu pozn�mku? V�dy� to funguje?
+            //reachableTiles = groundManager.FindReachableTiles(player.GetPosition(), blockedTiles, 1); // p�ed�lat blocked tiles??? Pro� jsem sem dal tu pozn�mku? V�dy� to funguje?
+            reachableTiles = groundManager.GetSurroundingTiles(player.GetPosition(), 1);
+        }
+        else if (player.GetComponent<Skills>().attackMode == AttackMode.Ranged)
+        {
+            //reachableTiles = groundManager.FindReachableTiles(player.GetPosition(), blockedTiles, 3);
+            reachableTiles = groundManager.GetSurroundingTiles(player.GetPosition(), 3);
+        }
+        else if (player.GetComponent<Skills>().attackMode == AttackMode.Fireball)
+        { 
+            reachableTiles = groundManager.GetSurroundingTiles(player.GetPosition(), 5); // Zatím je fireball na jednoho enemáka. možnost udělat splash damage pokud bude čas
+        }
+        else if (player.GetComponent<Skills>().attackMode == AttackMode.Bolt)
+        {
+            reachableTiles = groundManager.GetSurroundingTiles(player.GetPosition(), 2);
         }
         else
         {
-            reachableTiles = groundManager.FindReachableTiles(player.GetPosition(), blockedTiles, 3);
+            reachableTiles = new List<UnityEngine.Vector2> { player.GetPosition() };
         }
         Debug.Log(reachableTiles);
         groundManager.TintTiles(reachableTiles, Color.red);
@@ -94,11 +108,25 @@ public class GameManager : MonoBehaviour
 
             if (player.GetComponent<Skills>().attackMode == AttackMode.Melee)
             {
-                reachableTiles = groundManager.FindReachableTiles(player.GetPosition(), blockedTiles, 1);
+                //reachableTiles = groundManager.FindReachableTiles(player.GetPosition(), blockedTiles, 1);
+                reachableTiles = groundManager.GetSurroundingTiles(player.GetPosition(), 1);
+            }
+            else if(player.GetComponent<Skills>().attackMode == AttackMode.Ranged)
+            {
+                //reachableTiles = groundManager.FindReachableTiles(player.GetPosition(), blockedTiles, 3);
+                reachableTiles = groundManager.GetSurroundingTiles(player.GetPosition(), 3);
+            }
+            else if(player.GetComponent<Skills>().attackMode == AttackMode.Fireball)
+            {
+                reachableTiles = groundManager.GetSurroundingTiles(player.GetPosition(), 5);
+            }
+            else if (player.GetComponent<Skills>().attackMode == AttackMode.Bolt)
+            {
+                reachableTiles = groundManager.GetSurroundingTiles(player.GetPosition(), 2);
             }
             else
             {
-                reachableTiles = groundManager.FindReachableTiles(player.GetPosition(), blockedTiles, 3);
+                reachableTiles = new List<UnityEngine.Vector2> { player.GetPosition() };
             }
 
             if (reachableTiles.Contains(position))
@@ -150,20 +178,41 @@ public class GameManager : MonoBehaviour
     {
         switch (gameState) {
             case GameState.PlayerMoving:
-            if (Input.GetKeyDown(KeyCode.Backspace) && gameState == GameState.PlayerMoving)
+            if (Input.GetKeyDown(KeyCode.Backspace)/* && gameState == GameState.PlayerMoving*/)
             { // Skip pohybu
                 Debug.Log("clicledus");
                 groundManager.UntintAllTiles();
                 FightRange();
                 FinishedMoving();
                 Debug.Log(gameState);
-        }   
+            }   
             break;
 
             case GameState.PlayerAction:
             if (Input.GetKeyDown(KeyCode.Tab))
             { // Přepnutí režimu boje
                 player.GetComponent<Skills>().ToggleAttackMode();
+                groundManager.UntintAllTiles();
+                FightRange();
+            }
+
+            if (Input.GetKeyDown(KeyCode.Q))
+            { // Přepnutí režimu boje
+                player.GetComponent<Skills>().ToggleFireball();
+                groundManager.UntintAllTiles();
+                FightRange();
+            }
+
+            if (Input.GetKeyDown(KeyCode.W))
+            { // Přepnutí režimu boje
+                player.GetComponent<Skills>().ToggleBolt();
+                groundManager.UntintAllTiles();
+                FightRange();
+            }
+
+            if (Input.GetKeyDown(KeyCode.E))
+            { // Přepnutí režimu boje
+                player.GetComponent<Skills>().ToggleHeal();
                 groundManager.UntintAllTiles();
                 FightRange();
             }

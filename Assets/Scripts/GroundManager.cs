@@ -166,4 +166,28 @@ public class GroundManager : MonoBehaviour
 
         return output;
     }
+
+    public List<Vector2> GetSurroundingTiles(Vector2 center, int distance)
+    {
+        List<Vector2> surroundingTiles = new List<Vector2>();
+
+        for (int dx = -distance; dx <= distance; dx++)
+        {
+            for (int dy = -distance; dy <= distance; dy++)
+            {
+                if (dx == 0 && dy == 0)
+                    continue;
+
+                surroundingTiles.Add(new Vector2(center.x + dx, center.y + dy));
+            }
+        }
+        List<UnityEngine.Vector2> allowed = new List<UnityEngine.Vector2> { };
+        foreach (var enemy in gameManager.enemies)
+        {
+            allowed.Add(enemy.Item1.GetPosition());
+        }
+        //surroundingTiles = surroundingTiles.Intersect(allowed).ToList();
+
+        return surroundingTiles;
+    }
 }
