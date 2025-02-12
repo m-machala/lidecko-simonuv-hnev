@@ -27,8 +27,7 @@ public class Character : MonoBehaviour
         return modifiedPosition;
     }
 
-    public void Move(List<Vector2> positions, float stepTime) {
-        // animator.SetFloat("Speed", 1.0f);
+    public void Move(List<Vector2> positions, float stepTime) {        
         foreach (Vector2 position in positions) {
             nextPositions.Add((position, stepTime));
         }
@@ -41,13 +40,14 @@ public class Character : MonoBehaviour
     if (nextPositions.Count == 0 && moving) {        
         moving = false;            
         gameManager.FinishedMoving();   
-        // animator.SetFloat("Speed", 0.0f);  
+        animator.SetBool("isRunning", false);;  
     }
 
     if (nextPositions.Count == 0) {
         return;
     }      
-         
+
+    animator.SetBool("isRunning", true);     
     float travelDistance = Vector2.Distance(previousPosition, nextPositions[0].Item1);
     elapsedMovementTime += Time.deltaTime;    
     if (elapsedMovementTime >= nextPositions[0].Item2 * travelDistance) {
