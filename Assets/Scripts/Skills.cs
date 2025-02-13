@@ -77,11 +77,24 @@ public class Skills : MonoBehaviour
         Heal,
     }
 
-    public void ToggleAttackMode()
+    /*public void ToggleAttackMode()
     {
         attackMode = (attackMode == AttackMode.Melee) ? AttackMode.Ranged : AttackMode.Melee;
         Debug.Log("Attack mode switched to: " + attackMode);
+    }*/
+
+    public void ToggleMele()
+    {
+        attackMode = AttackMode.Melee;
+        Debug.Log("Attack mode switched to: " + attackMode);
     }
+
+    public void ToggleRanged()
+    {
+        attackMode = AttackMode.Ranged;
+        Debug.Log("Attack mode switched to: " + attackMode);
+    }
+
     public void ToggleFireball()
     {
         attackMode = AttackMode.Fireball;
