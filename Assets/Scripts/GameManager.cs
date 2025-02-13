@@ -27,6 +27,7 @@ public class GameManager : MonoBehaviour
     public List<(Character, EnemyAI, Skills)> enemies = new List<(Character, EnemyAI, Skills)>();
 
     [Range(0, 100)] public int walkDistance = 5;
+    bool waiting = false;
 
     public void FinishedMoving() {
         if (gameState == GameState.PlayerMoving) {
@@ -38,11 +39,13 @@ public class GameManager : MonoBehaviour
 
     public void ReadyToMove()
     {
+        gameState = GameState.PlayerMoving;
         var playerSkills = player.GetComponent<Skills>();
         playerSkills.turnEnder();
         List<UnityEngine.Vector2> blockedTiles = getBlockedPositions();
         List<UnityEngine.Vector2> reachableTiles = groundManager.FindReachableTiles(player.GetPosition(), blockedTiles, walkDistance);
         groundManager.TintTiles(reachableTiles, Color.blue);
+        waiting = false;
     }
 
     public void ActionComplete() {
@@ -59,6 +62,8 @@ public class GameManager : MonoBehaviour
             Debug.Log("Move enemy");
             enemy.Item2.move();
         }
+
+        waiting = false;
     }
 
     public void FightRange()
@@ -98,6 +103,7 @@ public class GameManager : MonoBehaviour
     }
 
     public void TileClicked(UnityEngine.Vector2 position) {
+        if (waiting) return;
         if (!player.moving && gameState == GameState.PlayerMoving) {
             List<UnityEngine.Vector2> blockedTiles = getBlockedPositions();
             List<UnityEngine.Vector2> reachableTiles = groundManager.FindReachableTiles(player.GetPosition(), blockedTiles, walkDistance);
@@ -219,7 +225,7 @@ public class GameManager : MonoBehaviour
                 }
                 Debug.Log(playerSkills.maxMana);
                 Debug.Log(playerSkills.mana);
-                ActionComplete();
+                Invoke("ActionComplete", 3f);
             }
         }
         Debug.Log(gameState);
@@ -278,6 +284,9 @@ public class GameManager : MonoBehaviour
             break;
 
             case GameState.PlayerAction:
+            if (waiting) {
+                break;
+            }
             if (Input.GetKeyDown(KeyCode.Tab))
             { // Přepnutí režimu boje
                 player.GetComponent<Skills>().ToggleAttackMode();
@@ -311,7 +320,8 @@ public class GameManager : MonoBehaviour
                 Debug.Log("Clicked");
                 groundManager.UntintAllTiles();
                 Debug.Log(gameState);
-                ActionComplete();
+                Invoke("ActionComplete", 3f);
+                waiting = true;
             }
             break;
 
@@ -342,8 +352,9 @@ public class GameManager : MonoBehaviour
             break;
 
             case GameState.EnemyAction:
-            gameState = GameState.PlayerMoving;
-            ReadyToMove();
+            if (waiting) break;
+            Invoke("ReadyToMove", 3f);
+            waiting = true;
             break;
         }
   
