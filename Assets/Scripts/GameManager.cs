@@ -27,6 +27,13 @@ public class GameManager : MonoBehaviour
     public List<(Character, EnemyAI, Skills)> enemies = new List<(Character, EnemyAI, Skills)>();
 
     [Range(0, 100)] public int walkDistance = 5;
+    bool waiting = false;
+
+    // New fields for sequential enemy processing
+    private int enemyTurnIndex = 0;
+    private bool enemyTurnMoveInitiated = false;
+    private bool enemyHasAttacked = false;
+    private float attackDelayTimer = 0f;
 
     public void FinishedMoving() {
         if (gameState == GameState.PlayerMoving) {
@@ -38,27 +45,23 @@ public class GameManager : MonoBehaviour
 
     public void ReadyToMove()
     {
+        gameState = GameState.PlayerMoving;
         var playerSkills = player.GetComponent<Skills>();
         playerSkills.turnEnder();
         List<UnityEngine.Vector2> blockedTiles = getBlockedPositions();
         List<UnityEngine.Vector2> reachableTiles = groundManager.FindReachableTiles(player.GetPosition(), blockedTiles, walkDistance);
         groundManager.TintTiles(reachableTiles, Color.blue);
+        waiting = false;
     }
 
     public void ActionComplete() {
+        // Initialize sequential enemy processing
+        enemyTurnIndex = 0;
+        enemyTurnMoveInitiated = false;
+        enemyHasAttacked = false;
         gameState = GameState.EnemyMoving;
-        Debug.Log("Enemies moving");
-
-        foreach (var enemy in enemies) {
-            if (enemy.Item3.health <= 0) {
-                Debug.Log("Enemy died");
-                Destroy(enemy.Item1.gameObject);
-                enemies.Remove(enemy);
-                continue;
-            }
-            Debug.Log("Move enemy");
-            enemy.Item2.move();
-        }
+        Debug.Log("Enemies turn started sequentially");
+        waiting = false;
     }
 
     public void FightRange()
@@ -73,17 +76,15 @@ public class GameManager : MonoBehaviour
         Debug.Log(attack);
         if (player.GetComponent<Skills>().attackMode == AttackMode.Melee)
         {
-            //reachableTiles = groundManager.FindReachableTiles(player.GetPosition(), blockedTiles, 1); // p�ed�lat blocked tiles??? Pro� jsem sem dal tu pozn�mku? V�dy� to funguje?
             reachableTiles = groundManager.GetSurroundingTiles(player.GetPosition(), 1);
         }
         else if (player.GetComponent<Skills>().attackMode == AttackMode.Ranged)
         {
-            //reachableTiles = groundManager.FindReachableTiles(player.GetPosition(), blockedTiles, 3);
             reachableTiles = groundManager.GetSurroundingTiles(player.GetPosition(), 3);
         }
         else if (player.GetComponent<Skills>().attackMode == AttackMode.Fireball)
         { 
-            reachableTiles = groundManager.GetSurroundingTiles(player.GetPosition(), 5); // Zatím je fireball na jednoho enemáka. možnost udělat splash damage pokud bude čas
+            reachableTiles = groundManager.GetSurroundingTiles(player.GetPosition(), 5);
         }
         else if (player.GetComponent<Skills>().attackMode == AttackMode.Bolt)
         {
@@ -98,6 +99,7 @@ public class GameManager : MonoBehaviour
     }
 
     public void TileClicked(UnityEngine.Vector2 position) {
+        if (waiting) return;
         if (!player.moving && gameState == GameState.PlayerMoving) {
             List<UnityEngine.Vector2> blockedTiles = getBlockedPositions();
             List<UnityEngine.Vector2> reachableTiles = groundManager.FindReachableTiles(player.GetPosition(), blockedTiles, walkDistance);
@@ -117,26 +119,25 @@ public class GameManager : MonoBehaviour
 
             switch (attackMode) {
                 case AttackMode.Melee:
-                reachableTiles = groundManager.GetSurroundingTiles(player.GetPosition(), 1);
-                break;
+                    reachableTiles = groundManager.GetSurroundingTiles(player.GetPosition(), 1);
+                    break;
 
                 case AttackMode.Ranged:
-                reachableTiles = groundManager.GetSurroundingTiles(player.GetPosition(), 3);
-                break;
+                    reachableTiles = groundManager.GetSurroundingTiles(player.GetPosition(), 3);
+                    break;
 
                 case AttackMode.Fireball:
-                reachableTiles = groundManager.GetSurroundingTiles(player.GetPosition(), 5);
-                break;
+                    reachableTiles = groundManager.GetSurroundingTiles(player.GetPosition(), 5);
+                    break;
 
                 case AttackMode.Bolt:
-                reachableTiles = groundManager.GetSurroundingTiles(player.GetPosition(), 2);
-                break;
+                    reachableTiles = groundManager.GetSurroundingTiles(player.GetPosition(), 2);
+                    break;
 
                 default:
-                reachableTiles = new List<UnityEngine.Vector2> { player.GetPosition() };
-                break;
+                    reachableTiles = new List<UnityEngine.Vector2> { player.GetPosition() };
+                    break;
             }
-
 
             if (reachableTiles.Contains(position))
             {
@@ -144,88 +145,85 @@ public class GameManager : MonoBehaviour
 
                 switch (attackMode) {
                     case AttackMode.Melee:
-                    foreach (var enemy in enemies) {
-                        if (enemy.Item1.GetPosition() == position) {
-                            playerSkills.meleeAttack(enemy.Item3);
-                        }
-                    }
-                    break;
-
-                    case AttackMode.Ranged:
-                    foreach (var enemy in enemies) {
-                        if (enemy.Item1.GetPosition() == position) {
-                            playerSkills.arrowAttack(enemy.Item3);
-                        }
-                    }
-                    break;
-
-                    case AttackMode.Fireball:
-                    if (playerSkills.mana < playerSkills.fireballCost) return;
-                    var fireballTargetTiles = groundManager.GetSurroundingTiles(position, 3);
-                    Skills mainTarget = null;
-                    List<Skills> surroundingTargets = new List<Skills>();
-
-                    foreach (var enemy in enemies) {
-                        if (enemy.Item1.GetPosition() == position) {
-                            mainTarget = enemy.Item3;
-                        }
-                        else {
-                            if (fireballTargetTiles.Contains(enemy.Item1.GetPosition())) {
-                                surroundingTargets.Add(enemy.Item3);
+                        foreach (var enemy in enemies) {
+                            if (enemy.Item1.GetPosition() == position) {
+                                playerSkills.meleeAttack(enemy.Item3);
                             }
                         }
-                    }
+                        break;
 
-                    if (mainTarget != null) {
-                        playerSkills.fireballAttack(mainTarget, surroundingTargets);
-                    }
-                    break;
+                    case AttackMode.Ranged:
+                        foreach (var enemy in enemies) {
+                            if (enemy.Item1.GetPosition() == position) {
+                                playerSkills.arrowAttack(enemy.Item3);
+                            }
+                        }
+                        break;
+
+                    case AttackMode.Fireball:
+                        if (playerSkills.mana < playerSkills.fireballCost) return;
+                        var fireballTargetTiles = groundManager.GetSurroundingTiles(position, 3);
+                        Skills mainTarget = null;
+                        List<Skills> surroundingTargets = new List<Skills>();
+
+                        foreach (var enemy in enemies) {
+                            if (enemy.Item1.GetPosition() == position) {
+                                mainTarget = enemy.Item3;
+                            }
+                            else {
+                                if (fireballTargetTiles.Contains(enemy.Item1.GetPosition())) {
+                                    surroundingTargets.Add(enemy.Item3);
+                                }
+                            }
+                        }
+
+                        if (mainTarget != null) {
+                            playerSkills.fireballAttack(mainTarget, surroundingTargets);
+                        }
+                        break;
 
                     case AttackMode.Bolt:
-                    if (playerSkills.mana < playerSkills.boltCost) return;
-                    List<UnityEngine.Vector2> hitPositions = new List<UnityEngine.Vector2>();
-                    hitPositions.Add(position);
+                        if (playerSkills.mana < playerSkills.boltCost) return;
+                        List<UnityEngine.Vector2> hitPositions = new List<UnityEngine.Vector2>();
+                        hitPositions.Add(position);
 
-                    while (true) {
-                        if (UnityEngine.Random.Range(0, 1) > 0.3) {
-                            break;
+                        while (true) {
+                            if (UnityEngine.Random.Range(0, 1) > 0.3) {
+                                break;
+                            }
+
+                            var positionCandidates = groundManager.GetSurroundingTiles(hitPositions.Last(), 3);
+                            var selectedCandidate = positionCandidates[UnityEngine.Random.Range(0, positionCandidates.Count)];
+
+                            if (hitPositions.Contains(selectedCandidate)) {
+                                break;
+                            }
+
+                            hitPositions.Add(selectedCandidate);
                         }
 
-                        var positionCandidates = groundManager.GetSurroundingTiles(hitPositions.Last(), 3);
-                        var selectedCandidate = positionCandidates[UnityEngine.Random.Range(0, positionCandidates.Count)];
-
-                        if (hitPositions.Contains(selectedCandidate)) {
-                            break;
+                        List<Skills> targets = new List<Skills>();
+                        foreach (var enemy in enemies) {
+                            if (hitPositions.Contains(enemy.Item1.GetPosition())) {
+                                targets.Add(enemy.Item3);
+                            }
                         }
 
-                        hitPositions.Add(selectedCandidate);
-                    }
-
-
-                    List<Skills> targets = new List<Skills>();
-                    foreach (var enemy in enemies) {
-                        if (hitPositions.Contains(enemy.Item1.GetPosition())) {
-                            targets.Add(enemy.Item3);
-                        }
-                    }
-
-                    playerSkills.boltAttack(targets);
-                    break;
+                        playerSkills.boltAttack(targets);
+                        break;
 
                     default:
-                    if (playerSkills.mana < playerSkills.healCost) return;
-                    playerSkills.heal();
-                    break;
+                        if (playerSkills.mana < playerSkills.healCost) return;
+                        playerSkills.heal();
+                        break;
                 }
                 Debug.Log(playerSkills.maxMana);
                 Debug.Log(playerSkills.mana);
-                ActionComplete();
+                Invoke("ActionComplete", 1f);
             }
         }
         Debug.Log(gameState);
     }
-
-
 
     public List<UnityEngine.Vector2> getBlockedPositions() {
         List<UnityEngine.Vector2> blockedPositions = new List<UnityEngine.Vector2>
@@ -267,85 +265,110 @@ public class GameManager : MonoBehaviour
     {
         switch (gameState) {
             case GameState.PlayerMoving:
-            if (Input.GetKeyDown(KeyCode.Backspace)/* && gameState == GameState.PlayerMoving*/)
-            { // Skip pohybu
-                Debug.Log("clicledus");
-                groundManager.UntintAllTiles();
-                FightRange();
-                FinishedMoving();
-                Debug.Log(gameState);
-            }   
-            break;
+                if (Input.GetKeyDown(KeyCode.Backspace))
+                { // Skip movement
+                    Debug.Log("clicledus");
+                    groundManager.UntintAllTiles();
+                    FightRange();
+                    FinishedMoving();
+                    Debug.Log(gameState);
+                }   
+                break;
 
             case GameState.PlayerAction:
-            if (Input.GetKeyDown(KeyCode.Tab))
-            { // Přepnutí režimu boje
-                player.GetComponent<Skills>().ToggleAttackMode();
-                groundManager.UntintAllTiles();
-                FightRange();
-            }
-
-            if (Input.GetKeyDown(KeyCode.Q))
-            { // Přepnutí režimu boje
-                player.GetComponent<Skills>().ToggleFireball();
-                groundManager.UntintAllTiles();
-                FightRange();
-            }
-
-            if (Input.GetKeyDown(KeyCode.W))
-            { // Přepnutí režimu boje
-                player.GetComponent<Skills>().ToggleBolt();
-                groundManager.UntintAllTiles();
-                FightRange();
-            }
-
-            if (Input.GetKeyDown(KeyCode.E))
-            { // Přepnutí režimu boje
-                player.GetComponent<Skills>().ToggleHeal();
-                groundManager.UntintAllTiles();
-                FightRange();
-            }
-
-            if (Input.GetKeyDown(KeyCode.Backspace))
-            { // Skip re�imu boje
-                Debug.Log("Clicked");
-                groundManager.UntintAllTiles();
-                Debug.Log(gameState);
-                ActionComplete();
-            }
-            break;
-
-            case GameState.EnemyMoving:
-            bool enemiesFinishedMoving = true;
-
-            foreach (var enemy in enemies) {
-                if (enemy.Item1.moving) {
-                    enemiesFinishedMoving = false;
+                if (waiting) {
                     break;
                 }
-            }
-
-            if (enemiesFinishedMoving) {
-                Debug.Log("Enemy action");
-                gameState = GameState.EnemyAction;
-
-                foreach (var enemy in enemies) {
-                    enemy.Item2.attack();
-                    Debug.Log(player.GetComponent<Skills>().health);
-                    enemy.Item3.turnEnder();
+                if (Input.GetKeyDown(KeyCode.Tab))
+                { // Toggle attack mode
+                    player.GetComponent<Skills>().ToggleAttackMode();
+                    groundManager.UntintAllTiles();
+                    FightRange();
                 }
-                if (player.GetComponent<Skills>().health <= 0) {
-                    Debug.Log("Game over");
-                    gameState = GameState.GameOver;
+
+                if (Input.GetKeyDown(KeyCode.Q))
+                { // Toggle fireball mode
+                    player.GetComponent<Skills>().ToggleFireball();
+                    groundManager.UntintAllTiles();
+                    FightRange();
                 }
-            }
-            break;
+
+                if (Input.GetKeyDown(KeyCode.W))
+                { // Toggle bolt mode
+                    player.GetComponent<Skills>().ToggleBolt();
+                    groundManager.UntintAllTiles();
+                    FightRange();
+                }
+
+                if (Input.GetKeyDown(KeyCode.E))
+                { // Toggle heal mode
+                    player.GetComponent<Skills>().ToggleHeal();
+                    groundManager.UntintAllTiles();
+                    FightRange();
+                }
+
+                if (Input.GetKeyDown(KeyCode.Backspace))
+                { // Skip action phase
+                    Debug.Log("Clicked");
+                    groundManager.UntintAllTiles();
+                    Debug.Log(gameState);
+                    Invoke("ActionComplete", 1f);
+                    waiting = true;
+                }
+                break;
+
+            case GameState.EnemyMoving:
+                // Process enemies sequentially: one enemy moves then attacks before moving on.
+                if (enemyTurnIndex < enemies.Count)
+                {
+                    var enemy = enemies[enemyTurnIndex];
+                    if (enemy.Item3.health <= 0) {
+                        Debug.Log("Enemy died");
+                        Destroy(enemy.Item1.gameObject);
+                        enemies.RemoveAt(enemyTurnIndex);
+                        enemyTurnMoveInitiated = false;
+                        enemyHasAttacked = false;
+                        break;
+                    }
+                    if (!enemy.Item1.moving && !enemyTurnMoveInitiated) {
+                        Debug.Log("Initiating move for enemy " + enemyTurnIndex);
+                        enemy.Item2.move();
+                        enemyTurnMoveInitiated = true;
+                    }
+                    if (enemyTurnMoveInitiated && !enemy.Item1.moving) {
+                        if (!enemyHasAttacked) {
+                            Debug.Log("Enemy " + enemyTurnIndex + " attacking");
+                            gameState = GameState.EnemyAction;
+                            enemy.Item2.attack();
+                            gameState = GameState.EnemyMoving;
+                            enemy.Item3.turnEnder();
+                            enemyHasAttacked = true;
+                            attackDelayTimer = 1f; // Delay after attack
+                        } else {
+                            attackDelayTimer -= Time.deltaTime;
+                            if (attackDelayTimer <= 0f) {
+                                enemyTurnIndex++;
+                                enemyTurnMoveInitiated = false;
+                                enemyHasAttacked = false;
+                            }
+                        }
+                    }
+                } else {
+                    if (player.GetComponent<Skills>().health <= 0) {
+                        Debug.Log("Game over");
+                        gameState = GameState.GameOver;
+                    } else {
+                        Debug.Log("Enemy turn complete");
+                        gameState = GameState.EnemyAction;
+                    }
+                }
+                break;
 
             case GameState.EnemyAction:
-            gameState = GameState.PlayerMoving;
-            ReadyToMove();
-            break;
+                if (waiting) break;
+                Invoke("ReadyToMove", 1f);
+                waiting = true;
+                break;
         }
-  
     }
 }
