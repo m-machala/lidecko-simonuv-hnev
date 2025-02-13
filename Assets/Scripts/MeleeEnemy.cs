@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class MeleeEnemy : MonoBehaviour, EnemyAI
 {
+    Animator animator;
     int movementRange = 2;
     float randomMovementChance = 0.25f;
     public void move()
@@ -43,15 +44,30 @@ public class MeleeEnemy : MonoBehaviour, EnemyAI
         var pathToGoal = gameManager.groundManager.FindShortestPath(availablePositions, character.GetPosition(), goal);
         character.Move(pathToGoal, 0.2f);
     }
+
     public void attack()
     {
         var character = GetComponent<Character>();
+        animator = GetComponentInChildren<Animator>();
         var gameManager = character.gameManager;
         
-        if (Vector2.Distance(character.GetPosition(), gameManager.player.GetPosition()) <= 1) {
+        if (Vector2.Distance(character.GetPosition(), gameManager.player.GetPosition()) <= 1.5f) {            
+            Vector3 directionToAttacker = character.transform.position - gameManager.player.transform.position;
+            directionToAttacker.y = 0;    
+            if (directionToAttacker != Vector3.zero) {
+                gameManager.player.transform.rotation = Quaternion.LookRotation(directionToAttacker);
+            }              
             GetComponent<Skills>().meleeAttack(gameManager.player.GetComponent<Skills>());
+            animator.SetTrigger("attackMelee");
+            
+            float attackAnimationLength = animator.GetCurrentAnimatorStateInfo(0).length;
+            StartCoroutine(TriggerGetHitWithDelay(gameManager.player.animator, attackAnimationLength));
         }
-
     }
 
+    private IEnumerator TriggerGetHitWithDelay(Animator playerAnimator, float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        playerAnimator.SetTrigger("getHit");
+    }
 }

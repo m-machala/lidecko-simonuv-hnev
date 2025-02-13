@@ -27,15 +27,12 @@ public class Skills : MonoBehaviour
     public int boltCost = 4;
 
     public AttackMode attackMode = AttackMode.Melee;
-    public Animator animator;
-
+     
     public void turnEnder() {
         mana = Math.Min(manaRegen + mana, maxMana);
     }
 
     public void meleeAttack(Skills target) {
-        animator = GetComponentInChildren<Animator>();  
-        animator.SetTrigger("attackMelee");
         target.health -= meleeDamage;       
     }
 
@@ -80,11 +77,24 @@ public class Skills : MonoBehaviour
         Heal,
     }
 
-    public void ToggleAttackMode()
+    /*public void ToggleAttackMode()
     {
         attackMode = (attackMode == AttackMode.Melee) ? AttackMode.Ranged : AttackMode.Melee;
         Debug.Log("Attack mode switched to: " + attackMode);
+    }*/
+
+    public void ToggleMele()
+    {
+        attackMode = AttackMode.Melee;
+        Debug.Log("Attack mode switched to: " + attackMode);
     }
+
+    public void ToggleRanged()
+    {
+        attackMode = AttackMode.Ranged;
+        Debug.Log("Attack mode switched to: " + attackMode);
+    }
+
     public void ToggleFireball()
     {
         attackMode = AttackMode.Fireball;

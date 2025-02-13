@@ -287,7 +287,7 @@ public class GameManager : MonoBehaviour
                 if (waiting) {
                     break;
                 }
-                if (Input.GetKeyDown(KeyCode.Tab))
+                /*if (Input.GetKeyDown(KeyCode.Tab))
                 { // Toggle attack mode
                     player.GetComponent<Skills>().ToggleAttackMode();
                     groundManager.UntintAllTiles();
@@ -313,7 +313,7 @@ public class GameManager : MonoBehaviour
                     player.GetComponent<Skills>().ToggleHeal();
                     groundManager.UntintAllTiles();
                     FightRange();
-                }
+                }*/
 
                 if (Input.GetKeyDown(KeyCode.Backspace))
                 { // Skip action phase
