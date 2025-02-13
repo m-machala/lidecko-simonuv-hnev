@@ -23,6 +23,7 @@ public class GameManager : MonoBehaviour
 
     public List<Tile> groundPrefabs;
     public GroundManager groundManager;
+    public ActionSelection actionSelection;
     public Character player;
     public List<(Character, EnemyAI, Skills)> enemies = new List<(Character, EnemyAI, Skills)>();
 
@@ -107,7 +108,10 @@ public class GameManager : MonoBehaviour
                 var path = groundManager.FindShortestPath(reachableTiles, player.GetPosition(), position);
                 player.Move(path, 0.2f);
                 groundManager.UntintAllTiles();
+                actionSelection.EnableIcons();
                 gameState = GameState.PlayerAction;
+                player.GetComponent<Skills>().ToggleMele();
+                FightRange();
             }
         }
         else if(!player.moving && gameState == GameState.PlayerAction)
@@ -219,6 +223,7 @@ public class GameManager : MonoBehaviour
                 }
                 Debug.Log(playerSkills.maxMana);
                 Debug.Log(playerSkills.mana);
+                actionSelection.DisableIcons();
                 Invoke("ActionComplete", 1f);
             }
         }
@@ -242,6 +247,17 @@ public class GameManager : MonoBehaviour
         return blockedPositions;
     }
 
+    private IEnumerator WaitForActionSelection()
+    {
+        while (actionSelection == null)
+        {
+            actionSelection = FindObjectOfType<ActionSelection>();
+            yield return null; // Poèkej 1 frame a zkus znovu
+        }
+
+        Debug.Log("ActionSelection byl nalezen v GameManageru.");
+    }
+
     void Start()
     {
         groundManager.setGameManager(this);
@@ -259,6 +275,7 @@ public class GameManager : MonoBehaviour
 
         foreach (var enemy in enemies) { enemy.Item1.setGameManager(this); }
         Invoke("ReadyToMove", 1f);
+        StartCoroutine(WaitForActionSelection());
     }
 
     void Update()

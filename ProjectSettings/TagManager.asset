@@ -9,6 +9,7 @@ TagManager:
   - FireballTag
   - BoltTag
   - HealTag
+  - IconTag
   layers:
   - Default
   - TransparentFX
