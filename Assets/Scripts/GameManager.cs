@@ -22,6 +22,7 @@ public class GameManager : MonoBehaviour
     public GameObject meleeEnemyPrefab;
 
     public List<Tile> groundPrefabs;
+    public List<Tile> obstaclePrefabs;
     public GroundManager groundManager;
     public Character player;
     public List<(Character, EnemyAI, Skills)> enemies = new List<(Character, EnemyAI, Skills)>();
@@ -246,7 +247,14 @@ public class GameManager : MonoBehaviour
     {
         groundManager.setGameManager(this);
         player.setGameManager(this);
-        groundManager.SpawnTiles(50, 50, groundPrefabs);
+        List<UnityEngine.Vector2> obstaclePositions = new List<UnityEngine.Vector2>
+        {
+            new UnityEngine.Vector2(1, 1),
+            new UnityEngine.Vector2(3, 5),
+            new UnityEngine.Vector2(9, 7)
+        };
+        
+        groundManager.SpawnTiles(10, 10, groundPrefabs, obstaclePrefabs, obstaclePositions);
         player.gameObject.AddComponent<Skills>();
         
         // TODO: implement enemy loading from a list of positions

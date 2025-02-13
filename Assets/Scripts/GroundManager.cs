@@ -9,7 +9,9 @@ using UnityEngine;
 public class GroundManager : MonoBehaviour
 {
     private List<Tile> spawnedTiles = new List<Tile>();
+    private List<Tile> spawnedObstacles = new List<Tile>();
     private List<Vector2> tilePositions = new List<Vector2>();
+    private List<Vector2> obstaclePositions = new List<Vector2>();
     private Quaternion defaultRotation = Quaternion.identity;
     private GameManager gameManager;
 
@@ -20,14 +22,25 @@ public class GroundManager : MonoBehaviour
     public void TileClicked(Vector2 position) {
         gameManager.TileClicked(position);
     }
-    public void SpawnTiles(int xCount, int zCount, List<Tile> prefabs) {
+    public void SpawnTiles(int xCount, int zCount, List<Tile> groundPrefabs, List<Tile> obstaclePrefabs, List<Vector2> obstaclePositions) {
         for (int x = 0; x < xCount; x++) {
             for (int z = 0; z < zCount; z++) {
-                int randomIndex = UnityEngine.Random.Range(0, prefabs.Count);
-                Tile newObject = Instantiate(prefabs[randomIndex], new Vector3(x, 0, z), defaultRotation);
-                newObject.setGroundManager(this);
-                spawnedTiles.Add(newObject);
-                tilePositions.Add(new Vector2(x, z));
+                if (obstaclePositions.Contains(new Vector2(x, z))) {
+                    int randomIndex = UnityEngine.Random.Range(0, obstaclePrefabs.Count);
+                    Tile newObject = Instantiate(obstaclePrefabs[randomIndex], new Vector3(x, 0, z), defaultRotation);
+                    newObject.setGroundManager(this);
+                    spawnedObstacles.Add(newObject);
+                    obstaclePositions.Add(new Vector2(x, z));
+
+                }
+                else
+                {
+                    int randomIndex = UnityEngine.Random.Range(0, groundPrefabs.Count);
+                    Tile newObject = Instantiate(groundPrefabs[randomIndex], new Vector3(x, 0, z), defaultRotation);
+                    newObject.setGroundManager(this);
+                    spawnedTiles.Add(newObject);
+                    tilePositions.Add(new Vector2(x, z));
+                }
             }
         }
     }
@@ -37,8 +50,14 @@ public class GroundManager : MonoBehaviour
             Destroy(spawnedTiles[i]);
         }
 
+        for (int i = 0; i < spawnedObstacles.Count; i++) {
+            Destroy(spawnedObstacles[i]);
+        }
+
         spawnedTiles.Clear();
+        spawnedObstacles.Clear();
         tilePositions.Clear();
+        obstaclePositions.Clear();
     }
 
     public void UntintAllTiles() {
@@ -82,7 +101,7 @@ public class GroundManager : MonoBehaviour
                 {
                     foreach (var neighbor in neighbors)
                     {
-                        if (!visited.Contains(neighbor) && !blockedPositions.Contains(neighbor) && tilePositions.Contains(neighbor))
+                        if (!visited.Contains(neighbor) && !blockedPositions.Contains(neighbor) && !obstaclePositions.Contains(neighbor) && tilePositions.Contains(neighbor))
                         {
                             queue.Enqueue((neighbor, currentSteps + 1));
                             visited.Add(neighbor);
