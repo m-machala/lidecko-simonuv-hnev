@@ -27,15 +27,12 @@ public class Skills : MonoBehaviour
     public int boltCost = 4;
 
     public AttackMode attackMode = AttackMode.Melee;
-    public Animator animator;
-
+     
     public void turnEnder() {
         mana = Math.Min(manaRegen + mana, maxMana);
     }
 
     public void meleeAttack(Skills target) {
-        animator = GetComponentInChildren<Animator>();  
-        animator.SetTrigger("attackMelee");
         target.health -= meleeDamage;       
     }
 
