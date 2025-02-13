@@ -40,7 +40,7 @@ public class Character : MonoBehaviour
     if (nextPositions.Count == 0 && moving) {        
         moving = false;            
         gameManager.FinishedMoving();   
-        animator.SetBool("isRunning", false);;  
+        animator.SetBool("isRunning", false); 
     }
 
     if (nextPositions.Count == 0) {
