@@ -29,6 +29,7 @@ public class ActionSelection : MonoBehaviour
     void Start()
     {
         StartCoroutine(WaitForGameManager());
+        //DIsableIcons();
     }
 
     // Update is called once per frame
@@ -36,6 +37,79 @@ public class ActionSelection : MonoBehaviour
     {
         
     }
+
+    public void DisableIcons()
+    {
+        Debug.Log("IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII");
+        Image meleBackg = GameObject.FindWithTag("MeleTag").GetComponent<Image>();
+        Image rangedBackg = GameObject.FindWithTag("RangedTag").GetComponent<Image>();
+        Image fireballBackg = GameObject.FindWithTag("FireballTag").GetComponent<Image>();
+        Image boltBackg = GameObject.FindWithTag("BoltTag").GetComponent<Image>();
+        Image healBackg = GameObject.FindWithTag("HealTag").GetComponent<Image>();
+
+        meleBackg.enabled = false;
+        rangedBackg.enabled = false;
+        fireballBackg.enabled = false;
+        boltBackg.enabled = false;
+        healBackg.enabled = false;
+
+        GameObject[] icons = GameObject.FindGameObjectsWithTag("IconTag");
+        List<Image> imgs = new List<Image>();
+        foreach (GameObject icon in icons)
+        {
+            Image img = icon.GetComponent<Image>();
+            if (img != null)
+            {
+                imgs.Add(img);
+            }
+        }
+
+        //List<Image> imgs = GameObject.FindWithTag("IconTag").GetComponent<Image>();
+        //Image rangedBackg = GameObject.FindWithTag("RangedTag").GetComponent<Image>();
+
+        foreach (Image img in imgs)
+        {
+            img.material.color = Color.grey;
+        }
+    }
+
+
+    public void EnableIcons()
+    {
+        Debug.Log("EEEEEEEEEEEEEEEEEEEEEEEEEEEEE");
+        Image meleBackg = GameObject.FindWithTag("MeleTag").GetComponent<Image>();
+        /*Image rangedBackg = GameObject.FindWithTag("RangedTag").GetComponent<Image>();
+        Image fireballBackg = GameObject.FindWithTag("FireballTag").GetComponent<Image>();
+        Image boltBackg = GameObject.FindWithTag("BoltTag").GetComponent<Image>();
+        Image healBackg = GameObject.FindWithTag("HealTag").GetComponent<Image>();*/
+
+        meleBackg.enabled = true;
+        /*rangedBackg.enabled = false;
+        fireballBackg.enabled = false;
+        boltBackg.enabled = false;
+        healBackg.enabled = false;*/
+
+        GameObject[] icons = GameObject.FindGameObjectsWithTag("IconTag");
+        List<Image> imgs = new List<Image>();
+        foreach (GameObject icon in icons)
+        {
+            Image img = icon.GetComponent<Image>();
+            if (img != null)
+            {
+                imgs.Add(img);
+            }
+        }
+
+        //List<Image> imgs = GameObject.FindWithTag("IconTag").GetComponent<Image>();
+        //Image rangedBackg = GameObject.FindWithTag("RangedTag").GetComponent<Image>();
+
+        foreach (Image img in imgs)
+        {
+            img.material.color = Color.white;
+        }
+    }
+
+
 
     public void ChangeOutline (){
 
