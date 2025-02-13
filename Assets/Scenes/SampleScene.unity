@@ -315,6 +315,8 @@ MonoBehaviour:
   - {fileID: 4503275831232118713, guid: 8ad06f8db0f41c44d93375873731ee24, type: 3}
   - {fileID: 542990073835070385, guid: 1e49f4f3db8c723479e8c7e45b6cdf60, type: 3}
   - {fileID: 6559812073336198404, guid: 0a065c7018bb32342b883190b9f76232, type: 3}
+  obstaclePrefabs:
+  - {fileID: 6559812073336198404, guid: ddec1d6a7c529ef40b26cc19b1d51ba4, type: 3}
   groundManager: {fileID: 1325182641}
   actionSelection: {fileID: 0}
   player: {fileID: 1922263342}
