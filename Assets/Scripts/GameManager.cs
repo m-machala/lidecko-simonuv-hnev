@@ -20,6 +20,9 @@ public class GameManager : MonoBehaviour
     public GameState gameState = GameState.PlayerMoving;
 
     public GameObject meleeEnemyPrefab;
+    public GameObject tankEnemyPrefab;
+    public GameObject archerEnemyPrefab;
+    public GameObject mageEnemyPrefab;
 
     public List<Tile> groundPrefabs;
     public List<Tile> obstaclePrefabs;
@@ -249,20 +252,174 @@ public class GameManager : MonoBehaviour
         player.setGameManager(this);
         List<UnityEngine.Vector2> obstaclePositions = new List<UnityEngine.Vector2>
         {
-            new UnityEngine.Vector2(1, 1),
-            new UnityEngine.Vector2(3, 5),
-            new UnityEngine.Vector2(9, 7)
+            new UnityEngine.Vector2(0, 0),
+            new UnityEngine.Vector2(0, 1),
+            new UnityEngine.Vector2(0, 23),
+            new UnityEngine.Vector2(0, 24),
+
+            new UnityEngine.Vector2(1, 0),
+            new UnityEngine.Vector2(1, 24),
+
+            new UnityEngine.Vector2(2, 4),
+            new UnityEngine.Vector2(2, 9),
+            new UnityEngine.Vector2(2, 15),
+            new UnityEngine.Vector2(2, 20),
+
+            new UnityEngine.Vector2(3, 4),
+            new UnityEngine.Vector2(3, 9),
+            new UnityEngine.Vector2(3, 15),
+            new UnityEngine.Vector2(3, 20),
+
+            new UnityEngine.Vector2(4, 2),
+            new UnityEngine.Vector2(4, 3),
+            new UnityEngine.Vector2(4, 4),
+            new UnityEngine.Vector2(4, 9),
+            new UnityEngine.Vector2(4, 15),
+            new UnityEngine.Vector2(4, 20),
+            new UnityEngine.Vector2(4, 21),
+            new UnityEngine.Vector2(4, 22),
+
+            new UnityEngine.Vector2(7, 4),
+            new UnityEngine.Vector2(7, 12),
+            new UnityEngine.Vector2(7, 20),
+
+            new UnityEngine.Vector2(8, 4),
+            new UnityEngine.Vector2(8, 11),
+            new UnityEngine.Vector2(8, 12),
+            new UnityEngine.Vector2(8, 13),
+            new UnityEngine.Vector2(8, 20),
+
+            new UnityEngine.Vector2(9, 4),
+            new UnityEngine.Vector2(9, 10),
+            new UnityEngine.Vector2(9, 11),
+            new UnityEngine.Vector2(9, 12),
+            new UnityEngine.Vector2(9, 13),
+            new UnityEngine.Vector2(9, 14),
+            new UnityEngine.Vector2(9, 20),
+
+            new UnityEngine.Vector2(10, 4),
+            new UnityEngine.Vector2(10, 9),
+            new UnityEngine.Vector2(10, 10),
+            new UnityEngine.Vector2(10, 11),
+            new UnityEngine.Vector2(10, 12),
+            new UnityEngine.Vector2(10, 13),
+            new UnityEngine.Vector2(10, 14),
+            new UnityEngine.Vector2(10, 15),
+            new UnityEngine.Vector2(10, 20),
+
+            new UnityEngine.Vector2(11, 4),
+            new UnityEngine.Vector2(11, 8),
+            new UnityEngine.Vector2(11, 9),
+            new UnityEngine.Vector2(11, 10),
+            new UnityEngine.Vector2(11, 11),
+            new UnityEngine.Vector2(11, 12),
+            new UnityEngine.Vector2(11, 13),
+            new UnityEngine.Vector2(11, 14),
+            new UnityEngine.Vector2(11, 15),
+            new UnityEngine.Vector2(11, 16),
+            new UnityEngine.Vector2(11, 20),
+
+            new UnityEngine.Vector2(12, 4),
+            new UnityEngine.Vector2(12, 7),
+            new UnityEngine.Vector2(12, 8),
+            new UnityEngine.Vector2(12, 9),
+            new UnityEngine.Vector2(12, 10),
+            new UnityEngine.Vector2(12, 11),
+            new UnityEngine.Vector2(12, 12),
+            new UnityEngine.Vector2(12, 13),
+            new UnityEngine.Vector2(12, 14),
+            new UnityEngine.Vector2(12, 15),
+            new UnityEngine.Vector2(12, 16),
+            new UnityEngine.Vector2(12, 17),
+            new UnityEngine.Vector2(12, 20),
+
+            new UnityEngine.Vector2(13, 4),
+            new UnityEngine.Vector2(13, 8),
+            new UnityEngine.Vector2(13, 9),
+            new UnityEngine.Vector2(13, 10),
+            new UnityEngine.Vector2(13, 11),
+            new UnityEngine.Vector2(13, 12),
+            new UnityEngine.Vector2(13, 13),
+            new UnityEngine.Vector2(13, 14),
+            new UnityEngine.Vector2(13, 15),
+            new UnityEngine.Vector2(13, 16),
+            new UnityEngine.Vector2(13, 20),
+
+            new UnityEngine.Vector2(14, 4),
+            new UnityEngine.Vector2(14, 9),
+            new UnityEngine.Vector2(14, 10),
+            new UnityEngine.Vector2(14, 11),
+            new UnityEngine.Vector2(14, 12),
+            new UnityEngine.Vector2(14, 13),
+            new UnityEngine.Vector2(14, 14),
+            new UnityEngine.Vector2(14, 15),
+            new UnityEngine.Vector2(14, 20),
+
+            new UnityEngine.Vector2(15, 4),
+            new UnityEngine.Vector2(15, 10),
+            new UnityEngine.Vector2(15, 11),
+            new UnityEngine.Vector2(15, 12),
+            new UnityEngine.Vector2(15, 13),
+            new UnityEngine.Vector2(15, 14),
+            new UnityEngine.Vector2(15, 20),
+
+            new UnityEngine.Vector2(16, 4),
+            new UnityEngine.Vector2(16, 11),
+            new UnityEngine.Vector2(16, 12),
+            new UnityEngine.Vector2(16, 13),
+            new UnityEngine.Vector2(16, 20),
+
+            new UnityEngine.Vector2(17, 4),
+            new UnityEngine.Vector2(17, 12),
+            new UnityEngine.Vector2(17, 20),
+
+            new UnityEngine.Vector2(20, 2),
+            new UnityEngine.Vector2(20, 3),
+            new UnityEngine.Vector2(20, 4),
+            new UnityEngine.Vector2(20, 9),
+            new UnityEngine.Vector2(20, 15),
+            new UnityEngine.Vector2(20, 20),
+            new UnityEngine.Vector2(20, 21),
+            new UnityEngine.Vector2(20, 22),
+
+            new UnityEngine.Vector2(21, 4),
+            new UnityEngine.Vector2(21, 9),
+            new UnityEngine.Vector2(21, 15),
+            new UnityEngine.Vector2(21, 20),
+
+            new UnityEngine.Vector2(22, 4),
+            new UnityEngine.Vector2(22, 9),
+            new UnityEngine.Vector2(22, 15),
+            new UnityEngine.Vector2(22, 20),
+
+            new UnityEngine.Vector2(23, 0),
+            new UnityEngine.Vector2(23, 24),
+
+            new UnityEngine.Vector2(24, 0),
+            new UnityEngine.Vector2(24, 1),
+            new UnityEngine.Vector2(24, 23),
+            new UnityEngine.Vector2(24, 24),
         };
         
-        groundManager.SpawnTiles(10, 10, groundPrefabs, obstaclePrefabs, obstaclePositions);
+        groundManager.SpawnTiles(25, 25, groundPrefabs, obstaclePrefabs, obstaclePositions);
         player.gameObject.AddComponent<Skills>();
         
-        // TODO: implement enemy loading from a list of positions
-        var testEnemy = Instantiate(meleeEnemyPrefab, new UnityEngine.Vector3(3f, 1.2f, 3f), UnityEngine.Quaternion.identity);
+        
+        var testEnemy = Instantiate(meleeEnemyPrefab, new UnityEngine.Vector3(2f, 1.2f, 2f), UnityEngine.Quaternion.identity);
         enemies.Add((testEnemy.GetComponent<Character>(), testEnemy.GetComponent<EnemyAI>(), testEnemy.GetComponent<Skills>()));
-        testEnemy = Instantiate(meleeEnemyPrefab, new UnityEngine.Vector3(1f, 1.2f, 6f), UnityEngine.Quaternion.identity);
+        testEnemy = Instantiate(meleeEnemyPrefab, new UnityEngine.Vector3(2f, 1.2f, 22f), UnityEngine.Quaternion.identity);
         enemies.Add((testEnemy.GetComponent<Character>(), testEnemy.GetComponent<EnemyAI>(), testEnemy.GetComponent<Skills>()));
-        testEnemy = Instantiate(meleeEnemyPrefab, new UnityEngine.Vector3(4f, 1.2f, 5f), UnityEngine.Quaternion.identity);
+        testEnemy = Instantiate(tankEnemyPrefab, new UnityEngine.Vector3(3f, 1.2f, 7f), UnityEngine.Quaternion.identity);
+        enemies.Add((testEnemy.GetComponent<Character>(), testEnemy.GetComponent<EnemyAI>(), testEnemy.GetComponent<Skills>()));
+        testEnemy = Instantiate(tankEnemyPrefab, new UnityEngine.Vector3(3f, 1.2f, 17f), UnityEngine.Quaternion.identity);
+        enemies.Add((testEnemy.GetComponent<Character>(), testEnemy.GetComponent<EnemyAI>(), testEnemy.GetComponent<Skills>()));
+        testEnemy = Instantiate(archerEnemyPrefab, new UnityEngine.Vector3(21f, 1.2f, 7f), UnityEngine.Quaternion.identity);
+        enemies.Add((testEnemy.GetComponent<Character>(), testEnemy.GetComponent<EnemyAI>(), testEnemy.GetComponent<Skills>()));
+        testEnemy = Instantiate(archerEnemyPrefab, new UnityEngine.Vector3(21f, 1.2f, 17f), UnityEngine.Quaternion.identity);
+        enemies.Add((testEnemy.GetComponent<Character>(), testEnemy.GetComponent<EnemyAI>(), testEnemy.GetComponent<Skills>()));
+        testEnemy = Instantiate(mageEnemyPrefab, new UnityEngine.Vector3(22f, 1.2f, 2f), UnityEngine.Quaternion.identity);
+        enemies.Add((testEnemy.GetComponent<Character>(), testEnemy.GetComponent<EnemyAI>(), testEnemy.GetComponent<Skills>()));
+        testEnemy = Instantiate(mageEnemyPrefab, new UnityEngine.Vector3(22f, 1.2f, 22f), UnityEngine.Quaternion.identity);
         enemies.Add((testEnemy.GetComponent<Character>(), testEnemy.GetComponent<EnemyAI>(), testEnemy.GetComponent<Skills>()));
 
         foreach (var enemy in enemies) { enemy.Item1.setGameManager(this); }
