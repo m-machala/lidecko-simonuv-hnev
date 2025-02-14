@@ -28,6 +28,8 @@ public class GameManager : MonoBehaviour
     public List<Tile> obstaclePrefabs;
     public GroundManager groundManager;
     public ActionSelection actionSelection;
+    public Healthbar healthbar;
+    public Manabar manabar;
     public Character player;
     public List<(Character, EnemyAI, Skills)> enemies = new List<(Character, EnemyAI, Skills)>();
 
@@ -45,6 +47,7 @@ public class GameManager : MonoBehaviour
             groundManager.UntintAllTiles();
             FightRange();
             gameState = GameState.PlayerAction;
+            actionSelection.EnableIcons();
         }
     }
 
@@ -53,6 +56,7 @@ public class GameManager : MonoBehaviour
         gameState = GameState.PlayerMoving;
         var playerSkills = player.GetComponent<Skills>();
         playerSkills.turnEnder();
+        manabar.SetMana(player.GetComponent<Skills>().mana);
         List<UnityEngine.Vector2> blockedTiles = getBlockedPositions();
         List<UnityEngine.Vector2> reachableTiles = groundManager.FindReachableTiles(player.GetPosition(), blockedTiles, walkDistance);
         groundManager.TintTiles(reachableTiles, Color.blue);
@@ -113,9 +117,9 @@ public class GameManager : MonoBehaviour
                 player.Move(path, 0.2f);
                 groundManager.UntintAllTiles();
                 actionSelection.EnableIcons();
-                gameState = GameState.PlayerAction;
+                /*gameState = GameState.PlayerAction;
                 player.GetComponent<Skills>().ToggleMele();
-                FightRange();
+                FightRange();*/
             }
         }
         else if(!player.moving && gameState == GameState.PlayerAction)
@@ -223,10 +227,12 @@ public class GameManager : MonoBehaviour
                     default:
                         if (playerSkills.mana < playerSkills.healCost) return;
                         playerSkills.heal();
+                        healthbar.SetHealth(playerSkills.health);
                         break;
                 }
                 Debug.Log(playerSkills.maxMana);
                 Debug.Log(playerSkills.mana);
+                manabar.SetMana(player.GetComponent<Skills>().mana);
                 actionSelection.DisableIcons();
                 Invoke("ActionComplete", 1f);
             }
@@ -256,10 +262,37 @@ public class GameManager : MonoBehaviour
         while (actionSelection == null)
         {
             actionSelection = FindObjectOfType<ActionSelection>();
-            yield return null; // Poèkej 1 frame a zkus znovu
+            yield return null;
         }
 
         Debug.Log("ActionSelection byl nalezen v GameManageru.");
+    }
+
+    private IEnumerator WaitForHealthbar()
+    {
+        while (healthbar == null)
+        {
+            healthbar = FindObjectOfType<Healthbar>();
+            yield return null;
+        }
+
+        healthbar.SetMaxHealth(player.GetComponent<Skills>().MaxHealth);
+
+        Debug.Log("Healthbar byl nalezen v GameManageru.");
+    }
+
+
+    private IEnumerator WaitForManabar()
+    {
+        while (manabar == null)
+        {
+            manabar = FindObjectOfType<Manabar>();
+            yield return null;
+        }
+
+        manabar.SetMaxMana(player.GetComponent<Skills>().maxMana);
+
+        Debug.Log("Manabar byl nalezen v GameManageru.");
     }
 
     void Start()
@@ -441,6 +474,8 @@ public class GameManager : MonoBehaviour
         foreach (var enemy in enemies) { enemy.Item1.setGameManager(this); }
         Invoke("ReadyToMove", 1f);
         StartCoroutine(WaitForActionSelection());
+        StartCoroutine(WaitForHealthbar());
+        StartCoroutine(WaitForManabar());
     }
 
     void Update()
@@ -526,6 +561,7 @@ public class GameManager : MonoBehaviour
                             enemy.Item3.turnEnder();
                             enemyHasAttacked = true;
                             attackDelayTimer = 1f; // Delay after attack
+                            healthbar.SetHealth(player.GetComponent<Skills>().health);
                         } else {
                             attackDelayTimer -= Time.deltaTime;
                             if (attackDelayTimer <= 0f) {
