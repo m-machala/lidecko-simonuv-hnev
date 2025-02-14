@@ -28,6 +28,7 @@ public class GameManager : MonoBehaviour
     public List<Tile> obstaclePrefabs;
     public GroundManager groundManager;
     public ActionSelection actionSelection;
+    public SpearCounter spearCounter;
     public Healthbar healthbar;
     public Manabar manabar;
     public Character player;
@@ -233,6 +234,7 @@ public class GameManager : MonoBehaviour
                 Debug.Log(playerSkills.maxMana);
                 Debug.Log(playerSkills.mana);
                 manabar.SetMana(player.GetComponent<Skills>().mana);
+                spearCounter.SetSpears(player.GetComponent<Skills>().arrowCount);
                 actionSelection.DisableIcons();
                 Invoke("ActionComplete", 1f);
             }
@@ -293,6 +295,19 @@ public class GameManager : MonoBehaviour
         manabar.SetMaxMana(player.GetComponent<Skills>().maxMana);
 
         Debug.Log("Manabar byl nalezen v GameManageru.");
+    }
+
+    private IEnumerator WaitForSpears()
+    {
+        while (spearCounter == null)
+        {
+            spearCounter = FindObjectOfType<SpearCounter>();
+            yield return null;
+        }
+
+        spearCounter.SetSpears(player.GetComponent<Skills>().arrowCount);
+
+        Debug.Log("SpearCount byl nalezen v GameManageru.");
     }
 
     void Start()
@@ -476,6 +491,7 @@ public class GameManager : MonoBehaviour
         StartCoroutine(WaitForActionSelection());
         StartCoroutine(WaitForHealthbar());
         StartCoroutine(WaitForManabar());
+        StartCoroutine(WaitForSpears());
     }
 
     void Update()

@@ -42,6 +42,7 @@ public class Skills : MonoBehaviour
         if (UnityEngine.Random.Range(0f, 1f) <= arrowHitChance) {
             target.health -= arrowDamage;
         }
+        arrowCount--;
     }
 
     public void fireballAttack(Skills mainTarget, List<Skills> surroundingTargets) {
