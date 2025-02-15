@@ -59,7 +59,7 @@ public class MeleeEnemy : MonoBehaviour, EnemyAI
             GetComponent<Skills>().meleeAttack(gameManager.player.GetComponent<Skills>());
             animator.SetTrigger("attackMelee");
             
-            float attackAnimationLength = animator.GetCurrentAnimatorStateInfo(0).length * 1.3f;            
+            float attackAnimationLength = animator.GetCurrentAnimatorStateInfo(0).length;            
             StartCoroutine(TriggerGetHitWithDelay(gameManager.player.animator, attackAnimationLength));
         }
     }

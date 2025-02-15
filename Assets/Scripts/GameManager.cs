@@ -603,8 +603,8 @@ public class GameManager : MonoBehaviour
                             enemy.Item2.attack();
                             gameState = GameState.EnemyMoving;
                             enemy.Item3.turnEnder();
-                            enemyHasAttacked = true;
-                            attackDelayTimer = 1f; // Delay after attack
+                            enemyHasAttacked = true;                            
+                            attackDelayTimer = 0.75f; // Delay after attack
                             healthbar.SetHealth(player.GetComponent<Skills>().health);
                         } else {
                             attackDelayTimer -= Time.deltaTime;
