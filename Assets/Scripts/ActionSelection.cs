@@ -16,10 +16,10 @@ public class ActionSelection : MonoBehaviour
 
     private IEnumerator WaitForGameManager()
     {
-        while (gameManager == null) // Dokud není pøiøazený GameManager, èekej
+        while (gameManager == null) // Dokud nenï¿½ pï¿½iï¿½azenï¿½ GameManager, ï¿½ekej
         {
             gameManager = FindObjectOfType<GameManager>();
-            yield return null; // Poèkej 1 frame a zkus znovu
+            yield return null; // Poï¿½kej 1 frame a zkus znovu
         }
 
         Debug.Log("GameManager byl nalezen v ActionSelection.");
