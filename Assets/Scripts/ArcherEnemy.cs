@@ -4,11 +4,12 @@ using UnityEngine;
 
 public class ArcherEnemy : MonoBehaviour, EnemyAI
 {
+    Animator animator;
     int movementRange = 2;
     float randomMovementChance = 0.25f;
     public void move()
     {
-        Debug.Log("Enemy move");
+        Debug.Log("ArcherEnemy: Enemy move");
         var character = GetComponent<Character>();
         var gameManager = character.gameManager;
         var blockedPositions = gameManager.getBlockedPositions();
@@ -21,12 +22,12 @@ public class ArcherEnemy : MonoBehaviour, EnemyAI
         
         var goal = availablePositions[0];
         if (UnityEngine.Random.Range(0f, 1f) <= randomMovementChance) {
-            Debug.Log("Moving randomly");
+            Debug.Log("ArcherEnemy: Moving randomly");
             goal = availablePositions[UnityEngine.Random.Range(0, availablePositions.Count)];
         }
         else {
             if (Vector2.Distance(playerPosition, character.GetPosition()) > 3) {
-                Debug.Log("Moving closer to the player");
+                Debug.Log("ArcherEnemy: Moving closer to the player");
                 float closestDistance = Vector2.Distance(character.GetPosition(), playerPosition);
                 Vector2 closestVector = character.GetPosition();
 
@@ -40,7 +41,7 @@ public class ArcherEnemy : MonoBehaviour, EnemyAI
                 goal = closestVector;
             }
             else if(Vector2.Distance(playerPosition, character.GetPosition()) <= 1 || GetComponent<Skills>().arrowCount <= 0) {
-                Debug.Log("Moving further away from the player");
+                Debug.Log("ArcherEnemy: Moving further away from the player");
                 float furthestDistance = 0;
                 Vector2 furthestVector = playerPosition;
 
@@ -54,7 +55,7 @@ public class ArcherEnemy : MonoBehaviour, EnemyAI
                 goal = furthestVector;
             }
             else {
-                Debug.Log("Not moving");
+                Debug.Log("ArcherEnemy: Not moving");
                 return;
             }
         }
@@ -65,11 +66,21 @@ public class ArcherEnemy : MonoBehaviour, EnemyAI
     public void attack()
     {
         var character = GetComponent<Character>();
+        animator = GetComponentInChildren<Animator>();
         var gameManager = character.gameManager;
         
         if (Vector2.Distance(character.GetPosition(), gameManager.player.GetPosition()) <= 3) {
             GetComponent<Skills>().arrowAttack(gameManager.player.GetComponent<Skills>());
+            animator.SetTrigger("rangeAttack");
+
+            float attackAnimationLength = animator.GetCurrentAnimatorStateInfo(0).length * 1.3f;            
+            StartCoroutine(TriggerGetHitWithDelay(gameManager.player.animator, attackAnimationLength));
         }
     }
 
+    private IEnumerator TriggerGetHitWithDelay(Animator playerAnimator, float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        playerAnimator.SetTrigger("getHit");
+    }
 }

@@ -55,7 +55,7 @@ public class Character : MonoBehaviour
         if (nextPositions.Count == 0) {
             return;
         }      
-
+        
         animator.SetBool("isRunning", true);     
         float travelDistance = Vector2.Distance(previousPosition, nextPositions[0].Item1);
         elapsedMovementTime += Time.deltaTime;    

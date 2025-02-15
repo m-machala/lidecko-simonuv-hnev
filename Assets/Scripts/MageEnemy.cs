@@ -4,11 +4,13 @@ using UnityEngine;
 
 public class MageEnemy : MonoBehaviour, EnemyAI
 {
+    Animator animator;
     int movementRange = 2;
     float randomMovementChance = 0.25f;
+
     public void move()
     {
-        Debug.Log("Enemy move");
+        Debug.Log("MageEnemy: Enemy move");
         var character = GetComponent<Character>();
         var gameManager = character.gameManager;
         var blockedPositions = gameManager.getBlockedPositions();
@@ -21,12 +23,12 @@ public class MageEnemy : MonoBehaviour, EnemyAI
         
         var goal = availablePositions[0];
         if (UnityEngine.Random.Range(0f, 1f) <= randomMovementChance) {
-            Debug.Log("Moving randomly");
+            Debug.Log("MageEnemy: Moving randomly");
             goal = availablePositions[UnityEngine.Random.Range(0, availablePositions.Count)];
         }
         else {
             if (Vector2.Distance(playerPosition, character.GetPosition()) > 5) {
-                Debug.Log("Moving closer to the player");
+                Debug.Log("MageEnemy: Moving closer to the player");
                 float closestDistance = Vector2.Distance(character.GetPosition(), playerPosition);
                 Vector2 closestVector = character.GetPosition();
 
@@ -40,7 +42,7 @@ public class MageEnemy : MonoBehaviour, EnemyAI
                 goal = closestVector;
             }
             else if(Vector2.Distance(playerPosition, character.GetPosition()) <= 3 || GetComponent<Skills>().mana < GetComponent<Skills>().fireballCost) {
-                Debug.Log("Moving further away from the player");
+                Debug.Log("MageEnemy: Moving further away from the player");
                 float furthestDistance = 0;
                 Vector2 furthestVector = playerPosition;
 
@@ -54,7 +56,7 @@ public class MageEnemy : MonoBehaviour, EnemyAI
                 goal = furthestVector;
             }
             else {
-                Debug.Log("Not moving");
+                Debug.Log("MageEnemy: Not moving");
                 return;
             }
         }
@@ -65,11 +67,21 @@ public class MageEnemy : MonoBehaviour, EnemyAI
     public void attack()
     {
         var character = GetComponent<Character>();
+        animator = GetComponentInChildren<Animator>();
         var gameManager = character.gameManager;
         
         if (Vector2.Distance(character.GetPosition(), gameManager.player.GetPosition()) <= 5) {
             GetComponent<Skills>().fireballAttack(gameManager.player.GetComponent<Skills>(), new List<Skills>());
+            animator.SetTrigger("fireballAttack");
+
+            float attackAnimationLength = animator.GetCurrentAnimatorStateInfo(0).length * 1.3f;            
+            StartCoroutine(TriggerGetHitWithDelay(gameManager.player.animator, attackAnimationLength));
         }
     }
 
+    private IEnumerator TriggerGetHitWithDelay(Animator playerAnimator, float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        playerAnimator.SetTrigger("getHit");
+    }
 }

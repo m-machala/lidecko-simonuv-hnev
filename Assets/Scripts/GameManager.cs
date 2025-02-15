@@ -28,8 +28,9 @@ public class GameManager : MonoBehaviour
     public List<Tile> obstaclePrefabs;
     public GroundManager groundManager;
     public ActionSelection actionSelection;
-    public Character player;
+    public Character player;    
     public List<(Character, EnemyAI, Skills)> enemies = new List<(Character, EnemyAI, Skills)>();
+    Animator animator;
 
     [Range(0, 100)] public int walkDistance = 5;
     bool waiting = false;
@@ -103,6 +104,12 @@ public class GameManager : MonoBehaviour
         groundManager.TintTiles(reachableTiles, Color.red);
     }
 
+    private IEnumerator TriggerGetHitWithDelay(Animator enemyAnimator, float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        enemyAnimator.SetTrigger("getHit");
+    }
+
     public void TileClicked(UnityEngine.Vector2 position) {
         if (waiting) return;
         if (!player.moving && gameState == GameState.PlayerMoving) {
@@ -148,14 +155,35 @@ public class GameManager : MonoBehaviour
             }
 
             if (reachableTiles.Contains(position))
-            {
+            {   
+                animator = GetComponentInChildren<Animator>(); 
                 groundManager.UntintAllTiles();
-
+                
                 switch (attackMode) {
                     case AttackMode.Melee:
-                        foreach (var enemy in enemies) {
-                            if (enemy.Item1.GetPosition() == position) {
+                        foreach (var enemy in enemies)
+                        {
+                            if (enemy.Item1.GetPosition() == position)
+                            {                                
+                                UnityEngine.Vector3 directionToEnemy = enemy.Item1.transform.position - player.transform.position;
+                                directionToEnemy.y = 0;
+                                if (directionToEnemy !=  UnityEngine.Vector3.zero)
+                                {
+                                    player.transform.rotation = UnityEngine.Quaternion.LookRotation(directionToEnemy);
+                                } 
+                                               
+                                UnityEngine.Vector3 directionToPlayer = player.transform.position - enemy.Item1.transform.position;
+                                directionToPlayer.y = 0;
+                                if (directionToPlayer !=  UnityEngine.Vector3.zero)
+                                {
+                                    enemy.Item1.transform.rotation = UnityEngine.Quaternion.LookRotation(directionToPlayer);
+                                }                        
+                                
+                                player.animator.SetTrigger("attackMelee");
                                 playerSkills.meleeAttack(enemy.Item3);
+                        
+                                float attackAnimationLength = player.animator.GetCurrentAnimatorStateInfo(0).length;
+                                player.StartCoroutine(TriggerGetHitWithDelay(enemy.Item1.animator, attackAnimationLength));
                             }
                         }
                         break;
@@ -256,7 +284,7 @@ public class GameManager : MonoBehaviour
         while (actionSelection == null)
         {
             actionSelection = FindObjectOfType<ActionSelection>();
-            yield return null; // Poèkej 1 frame a zkus znovu
+            yield return null; // Poï¿½kej 1 frame a zkus znovu
         }
 
         Debug.Log("ActionSelection byl nalezen v GameManageru.");

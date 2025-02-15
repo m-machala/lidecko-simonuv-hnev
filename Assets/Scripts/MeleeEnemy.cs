@@ -9,7 +9,7 @@ public class MeleeEnemy : MonoBehaviour, EnemyAI
     float randomMovementChance = 0.25f;
     public void move()
     {
-        Debug.Log("Enemy move");
+        Debug.Log("MeleeEnemy: Enemy move");
         var character = GetComponent<Character>();
         var gameManager = character.gameManager;
         var blockedPositions = gameManager.getBlockedPositions();
@@ -22,11 +22,11 @@ public class MeleeEnemy : MonoBehaviour, EnemyAI
         
         var goal = availablePositions[0];
         if (UnityEngine.Random.Range(0f, 1f) <= randomMovementChance) {
-            Debug.Log("Moving randomly");
+            Debug.Log("MeleeEnemy: Moving randomly");
             goal = availablePositions[UnityEngine.Random.Range(0, availablePositions.Count)];
         }
         else {
-            Debug.Log("Moving closer to the player");
+            Debug.Log("MeleeEnemy: Moving closer to the player");
             float closestDistance = Vector2.Distance(character.GetPosition(), playerPosition);
             Vector2 closestVector = character.GetPosition();
 
@@ -37,7 +37,6 @@ public class MeleeEnemy : MonoBehaviour, EnemyAI
                     closestVector = position;
                 }
             }
-
             goal = closestVector;
         }
         Debug.Log(goal);
@@ -60,7 +59,7 @@ public class MeleeEnemy : MonoBehaviour, EnemyAI
             GetComponent<Skills>().meleeAttack(gameManager.player.GetComponent<Skills>());
             animator.SetTrigger("attackMelee");
             
-            float attackAnimationLength = animator.GetCurrentAnimatorStateInfo(0).length;
+            float attackAnimationLength = animator.GetCurrentAnimatorStateInfo(0).length * 1.3f;            
             StartCoroutine(TriggerGetHitWithDelay(gameManager.player.animator, attackAnimationLength));
         }
     }
