@@ -11,6 +11,8 @@ public class Skills : MonoBehaviour
     public int mana = 10;
     public int manaRegen = 1;
 
+
+    public int MaxHealth = 20;
     public int health = 20;
     public int healCost = 2;
     public int healStrength = 5;
@@ -40,6 +42,7 @@ public class Skills : MonoBehaviour
         if (UnityEngine.Random.Range(0f, 1f) <= arrowHitChance) {
             target.health -= arrowDamage;
         }
+        arrowCount--;
     }
 
     public void fireballAttack(Skills mainTarget, List<Skills> surroundingTargets) {
@@ -63,7 +66,7 @@ public class Skills : MonoBehaviour
 
     public void heal() {
         if (mana >= healCost) {
-            health += healStrength;
+            Math.Min(health + healStrength, MaxHealth);
             mana -= healCost;
         }
     }

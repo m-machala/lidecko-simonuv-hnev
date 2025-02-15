@@ -29,18 +29,11 @@ public class ActionSelection : MonoBehaviour
     void Start()
     {
         StartCoroutine(WaitForGameManager());
-        //DIsableIcons();
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
+        DisableIcons();
     }
 
     public void DisableIcons()
     {
-        Debug.Log("IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII");
         Image meleBackg = GameObject.FindWithTag("MeleTag").GetComponent<Image>();
         Image rangedBackg = GameObject.FindWithTag("RangedTag").GetComponent<Image>();
         Image fireballBackg = GameObject.FindWithTag("FireballTag").GetComponent<Image>();
@@ -54,6 +47,7 @@ public class ActionSelection : MonoBehaviour
         healBackg.enabled = false;
 
         GameObject[] icons = GameObject.FindGameObjectsWithTag("IconTag");
+        //Debug.Log(icons);
         List<Image> imgs = new List<Image>();
         foreach (GameObject icon in icons)
         {
@@ -66,17 +60,16 @@ public class ActionSelection : MonoBehaviour
 
         //List<Image> imgs = GameObject.FindWithTag("IconTag").GetComponent<Image>();
         //Image rangedBackg = GameObject.FindWithTag("RangedTag").GetComponent<Image>();
-
         foreach (Image img in imgs)
         {
-            img.material.color = Color.grey;
+            img.color = Color.grey;
+            img.raycastTarget = false;
         }
     }
 
 
     public void EnableIcons()
     {
-        Debug.Log("EEEEEEEEEEEEEEEEEEEEEEEEEEEEE");
         Image meleBackg = GameObject.FindWithTag("MeleTag").GetComponent<Image>();
         /*Image rangedBackg = GameObject.FindWithTag("RangedTag").GetComponent<Image>();
         Image fireballBackg = GameObject.FindWithTag("FireballTag").GetComponent<Image>();
@@ -102,10 +95,10 @@ public class ActionSelection : MonoBehaviour
 
         //List<Image> imgs = GameObject.FindWithTag("IconTag").GetComponent<Image>();
         //Image rangedBackg = GameObject.FindWithTag("RangedTag").GetComponent<Image>();
-
         foreach (Image img in imgs)
         {
-            img.material.color = Color.white;
+            img.color = Color.white;
+            img.raycastTarget = true;
         }
     }
 
