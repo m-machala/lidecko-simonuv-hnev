@@ -10,6 +10,7 @@ TagManager:
   - BoltTag
   - HealTag
   - IconTag
+  - SkipTag
   layers:
   - Default
   - TransparentFX
