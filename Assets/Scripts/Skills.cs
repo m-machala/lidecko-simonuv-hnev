@@ -66,7 +66,7 @@ public class Skills : MonoBehaviour
 
     public void heal() {
         if (mana >= healCost) {
-            health = Math.Min(health + healStrength, MaxHealth);
+            Math.Min(health + healStrength, MaxHealth);
             mana -= healCost;
         }
     }
