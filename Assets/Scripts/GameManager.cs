@@ -165,6 +165,7 @@ public class GameManager : MonoBehaviour
             {   
                 animator = GetComponentInChildren<Animator>(); 
                 groundManager.UntintAllTiles();
+                float endWaitTime = 0f;
                 
                 switch (attackMode) {
                     case AttackMode.Melee:
@@ -191,6 +192,7 @@ public class GameManager : MonoBehaviour
                         
                                 float attackAnimationLength = player.animator.GetCurrentAnimatorStateInfo(0).length;
                                 player.StartCoroutine(TriggerGetHitWithDelay(enemy.Item1.animator, attackAnimationLength));
+                                endWaitTime = 1f;
                             }
                         }
                         break;
@@ -199,6 +201,7 @@ public class GameManager : MonoBehaviour
                         foreach (var enemy in enemies) {
                             if (enemy.Item1.GetPosition() == position) {
                                 playerSkills.arrowAttack(enemy.Item3);
+                                endWaitTime = UnityEngine.Vector2.Distance(player.GetPosition(), enemy.Item1.GetPosition()) * 0.5f;
                             }
                         }
                         break;
@@ -211,6 +214,7 @@ public class GameManager : MonoBehaviour
 
                         foreach (var enemy in enemies) {
                             if (enemy.Item1.GetPosition() == position) {
+                                endWaitTime = UnityEngine.Vector2.Distance(player.GetPosition(), enemy.Item1.GetPosition()) * 0.5f;
                                 mainTarget = enemy.Item3;
                             }
                             else {
@@ -227,6 +231,7 @@ public class GameManager : MonoBehaviour
 
                     case AttackMode.Bolt:
                         if (playerSkills.mana < playerSkills.boltCost) return;
+                        endWaitTime = 1f;
                         List<UnityEngine.Vector2> hitPositions = new List<UnityEngine.Vector2>();
                         hitPositions.Add(position);
 
@@ -259,6 +264,7 @@ public class GameManager : MonoBehaviour
                         if (playerSkills.mana < playerSkills.healCost) return;
                         playerSkills.heal();
                         healthbar.SetHealth(playerSkills.health);
+                        endWaitTime = 1f;
                         break;
                 }
                 Debug.Log(playerSkills.maxMana);
@@ -267,7 +273,7 @@ public class GameManager : MonoBehaviour
                 spearCounter.SetSpears(player.GetComponent<Skills>().arrowCount);
                 actionSelection.DisableIcons();
                 skipButton.DisableSkip();
-                Invoke("ActionComplete", 1f);
+                Invoke("ActionComplete", endWaitTime);
             }
         }
         Debug.Log(gameState);
