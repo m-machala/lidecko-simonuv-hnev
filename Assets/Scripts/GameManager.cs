@@ -29,6 +29,7 @@ public class GameManager : MonoBehaviour
     public GroundManager groundManager;
     public ActionSelection actionSelection;
     public SpearCounter spearCounter;
+    public SkipButton skipButton;
     public Healthbar healthbar;
     public Manabar manabar;
     public Character player;
@@ -36,7 +37,7 @@ public class GameManager : MonoBehaviour
     Animator animator;
 
     [Range(0, 100)] public int walkDistance = 5;
-    bool waiting = false;
+    public bool waiting = false;
 
     // New fields for sequential enemy processing
     private int enemyTurnIndex = 0;
@@ -63,6 +64,7 @@ public class GameManager : MonoBehaviour
         List<UnityEngine.Vector2> reachableTiles = groundManager.FindReachableTiles(player.GetPosition(), blockedTiles, walkDistance);
         groundManager.TintTiles(reachableTiles, Color.blue);
         waiting = false;
+        skipButton.EnableSkip();
     }
 
     public void ActionComplete() {
@@ -163,6 +165,7 @@ public class GameManager : MonoBehaviour
             {   
                 animator = GetComponentInChildren<Animator>(); 
                 groundManager.UntintAllTiles();
+                float endWaitTime = 0f;
                 
                 switch (attackMode) {
                     case AttackMode.Melee:
@@ -189,6 +192,7 @@ public class GameManager : MonoBehaviour
                         
                                 float attackAnimationLength = player.animator.GetCurrentAnimatorStateInfo(0).length;
                                 player.StartCoroutine(TriggerGetHitWithDelay(enemy.Item1.animator, attackAnimationLength));
+                                endWaitTime = 1f;
                             }
                         }
                         break;
@@ -197,6 +201,7 @@ public class GameManager : MonoBehaviour
                         foreach (var enemy in enemies) {
                             if (enemy.Item1.GetPosition() == position) {
                                 playerSkills.arrowAttack(enemy.Item3);
+                                endWaitTime = UnityEngine.Vector2.Distance(player.GetPosition(), enemy.Item1.GetPosition()) * 0.5f;
                             }
                         }
                         break;
@@ -209,6 +214,7 @@ public class GameManager : MonoBehaviour
 
                         foreach (var enemy in enemies) {
                             if (enemy.Item1.GetPosition() == position) {
+                                endWaitTime = UnityEngine.Vector2.Distance(player.GetPosition(), enemy.Item1.GetPosition()) * 0.5f;
                                 mainTarget = enemy.Item3;
                             }
                             else {
@@ -225,6 +231,7 @@ public class GameManager : MonoBehaviour
 
                     case AttackMode.Bolt:
                         if (playerSkills.mana < playerSkills.boltCost) return;
+                        endWaitTime = 1f;
                         List<UnityEngine.Vector2> hitPositions = new List<UnityEngine.Vector2>();
                         hitPositions.Add(position);
 
@@ -257,6 +264,7 @@ public class GameManager : MonoBehaviour
                         if (playerSkills.mana < playerSkills.healCost) return;
                         playerSkills.heal();
                         healthbar.SetHealth(playerSkills.health);
+                        endWaitTime = 1f;
                         break;
                 }
                 Debug.Log(playerSkills.maxMana);
@@ -264,7 +272,8 @@ public class GameManager : MonoBehaviour
                 manabar.SetMana(player.GetComponent<Skills>().mana);
                 spearCounter.SetSpears(player.GetComponent<Skills>().arrowCount);
                 actionSelection.DisableIcons();
-                Invoke("ActionComplete", 1f);
+                skipButton.DisableSkip();
+                Invoke("ActionComplete", endWaitTime);
             }
         }
         Debug.Log(gameState);
@@ -328,6 +337,17 @@ public class GameManager : MonoBehaviour
         Debug.Log("SpearCount byl nalezen v GameManageru.");
     }
 
+    private IEnumerator WaitForSkip()
+    {
+        while (skipButton == null)
+        {
+            skipButton = FindObjectOfType<SkipButton>();
+            yield return null;
+        }
+
+        Debug.Log("Skip byl nalezen v GameManageru.");
+    }
+
     void Start()
     {
         groundManager.setGameManager(this);
@@ -360,20 +380,21 @@ public class GameManager : MonoBehaviour
         StartCoroutine(WaitForHealthbar());
         StartCoroutine(WaitForManabar());
         StartCoroutine(WaitForSpears());
+        StartCoroutine(WaitForSkip());
     }
 
     void Update()
     {
         switch (gameState) {
             case GameState.PlayerMoving:
-                if (Input.GetKeyDown(KeyCode.Backspace))
+                /*if (Input.GetKeyDown(KeyCode.Backspace))
                 { // Skip movement
                     Debug.Log("clicledus");
                     groundManager.UntintAllTiles();
                     FightRange();
                     FinishedMoving();
                     Debug.Log(gameState);
-                }   
+                }   */
                 break;
 
             case GameState.PlayerAction:
@@ -408,14 +429,14 @@ public class GameManager : MonoBehaviour
                     FightRange();
                 }*/
 
-                if (Input.GetKeyDown(KeyCode.Backspace))
+                /*if (Input.GetKeyDown(KeyCode.Backspace))
                 { // Skip action phase
                     Debug.Log("Clicked");
                     groundManager.UntintAllTiles();
                     Debug.Log(gameState);
                     Invoke("ActionComplete", 1f);
                     waiting = true;
-                }
+                }*/
                 break;
 
             case GameState.EnemyMoving:

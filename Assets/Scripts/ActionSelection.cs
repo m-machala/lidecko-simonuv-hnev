@@ -8,24 +8,17 @@ public class ActionSelection : MonoBehaviour
     public GameManager gameManager;
     public Image selectedIcon;
 
-
-    /*public void setGameManager(GameManager gameManager)
-    {
-        this.gameManager = gameManager;
-    }*/
-
     private IEnumerator WaitForGameManager()
     {
-        while (gameManager == null) // Dokud nen� p�i�azen� GameManager, �ekej
+        while (gameManager == null)
         {
             gameManager = FindObjectOfType<GameManager>();
-            yield return null; // Po�kej 1 frame a zkus znovu
+            yield return null;
         }
 
         Debug.Log("GameManager byl nalezen v ActionSelection.");
     }
 
-    // Start is called before the first frame update
     void Start()
     {
         StartCoroutine(WaitForGameManager());
@@ -47,7 +40,6 @@ public class ActionSelection : MonoBehaviour
         healBackg.enabled = false;
 
         GameObject[] icons = GameObject.FindGameObjectsWithTag("IconTag");
-        //Debug.Log(icons);
         List<Image> imgs = new List<Image>();
         foreach (GameObject icon in icons)
         {
@@ -58,8 +50,6 @@ public class ActionSelection : MonoBehaviour
             }
         }
 
-        //List<Image> imgs = GameObject.FindWithTag("IconTag").GetComponent<Image>();
-        //Image rangedBackg = GameObject.FindWithTag("RangedTag").GetComponent<Image>();
         foreach (Image img in imgs)
         {
             img.color = Color.grey;
@@ -71,16 +61,8 @@ public class ActionSelection : MonoBehaviour
     public void EnableIcons()
     {
         Image meleBackg = GameObject.FindWithTag("MeleTag").GetComponent<Image>();
-        /*Image rangedBackg = GameObject.FindWithTag("RangedTag").GetComponent<Image>();
-        Image fireballBackg = GameObject.FindWithTag("FireballTag").GetComponent<Image>();
-        Image boltBackg = GameObject.FindWithTag("BoltTag").GetComponent<Image>();
-        Image healBackg = GameObject.FindWithTag("HealTag").GetComponent<Image>();*/
 
         meleBackg.enabled = true;
-        /*rangedBackg.enabled = false;
-        fireballBackg.enabled = false;
-        boltBackg.enabled = false;
-        healBackg.enabled = false;*/
 
         GameObject[] icons = GameObject.FindGameObjectsWithTag("IconTag");
         List<Image> imgs = new List<Image>();
@@ -93,16 +75,19 @@ public class ActionSelection : MonoBehaviour
             }
         }
 
-        //List<Image> imgs = GameObject.FindWithTag("IconTag").GetComponent<Image>();
-        //Image rangedBackg = GameObject.FindWithTag("RangedTag").GetComponent<Image>();
         foreach (Image img in imgs)
         {
+            if (((gameManager.player.GetComponent<Skills>().arrowCount <= 0) && (img.name == "Ranged")) ||
+                ((gameManager.player.GetComponent<Skills>().mana < gameManager.player.GetComponent<Skills>().fireballCost) && (img.name == "Fireball")) ||
+                ((gameManager.player.GetComponent<Skills>().mana < gameManager.player.GetComponent<Skills>().boltCost) && (img.name == "Bolt")) ||
+                ((gameManager.player.GetComponent<Skills>().mana < gameManager.player.GetComponent<Skills>().healCost) && (img.name == "Heal")))
+            {
+                continue;
+            }
             img.color = Color.white;
             img.raycastTarget = true;
         }
     }
-
-
 
     public void ChangeOutline (){
 
@@ -119,7 +104,6 @@ public class ActionSelection : MonoBehaviour
         healBackg.enabled = false;
 
         Debug.Log(selectedIcon.name);
-        //Debug.Log(selectedIcon.name != "Mele");
         if (selectedIcon.name == "Mele")
         {
             meleBackg.enabled=true;

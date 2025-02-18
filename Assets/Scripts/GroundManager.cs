@@ -10,7 +10,7 @@ public class GroundManager : MonoBehaviour
 {
     private List<Tile> spawnedTiles = new List<Tile>();
     private List<Tile> spawnedObstacles = new List<Tile>();
-    private List<Vector2> tilePositions = new List<Vector2>();
+    public List<Vector2> tilePositions = new List<Vector2>();
     private List<Vector2> obstaclePositions = new List<Vector2>();
     private Quaternion defaultRotation = Quaternion.identity;
     private GameManager gameManager;
@@ -164,7 +164,6 @@ public class GroundManager : MonoBehaviour
                 }
             }
         }
-
         return path;
     }
 
