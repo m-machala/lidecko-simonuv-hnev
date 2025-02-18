@@ -252,7 +252,7 @@ public class GameManager : MonoBehaviour
 
                         playerSkills.boltAttack(targets);
                         break;
-
+                        
                     default:
                         if (playerSkills.mana < playerSkills.healCost) return;
                         playerSkills.heal();
@@ -275,15 +275,12 @@ public class GameManager : MonoBehaviour
         {
             player.GetPosition(),
         };
-
         foreach (var enemy in enemies) {
-            blockedPositions.Add(enemy.Item1.GetPosition());
-            
+            blockedPositions.Add(enemy.Item1.GetPosition());            
             if (enemy.Item1.nextPositions.Count > 0) {
                 blockedPositions.Add(enemy.Item1.nextPositions.Last().Item1);
             }
         }
-
         return blockedPositions;
     }
 
@@ -294,7 +291,6 @@ public class GameManager : MonoBehaviour
             actionSelection = FindObjectOfType<ActionSelection>();
             yield return null;
         }
-
         Debug.Log("ActionSelection byl nalezen v GameManageru.");
     }
 
@@ -305,9 +301,7 @@ public class GameManager : MonoBehaviour
             healthbar = FindObjectOfType<Healthbar>();
             yield return null;
         }
-
         healthbar.SetMaxHealth(player.GetComponent<Skills>().MaxHealth);
-
         Debug.Log("Healthbar byl nalezen v GameManageru.");
     }
 
@@ -319,9 +313,7 @@ public class GameManager : MonoBehaviour
             manabar = FindObjectOfType<Manabar>();
             yield return null;
         }
-
         manabar.SetMaxMana(player.GetComponent<Skills>().maxMana);
-
         Debug.Log("Manabar byl nalezen v GameManageru.");
     }
 
@@ -332,9 +324,7 @@ public class GameManager : MonoBehaviour
             spearCounter = FindObjectOfType<SpearCounter>();
             yield return null;
         }
-
         spearCounter.SetSpears(player.GetComponent<Skills>().arrowCount);
-
         Debug.Log("SpearCount byl nalezen v GameManageru.");
     }
 
@@ -475,7 +465,6 @@ public class GameManager : MonoBehaviour
                     }
                 }
                 break;
-
             case GameState.EnemyAction:
                 if (waiting) break;
                 Invoke("ReadyToMove", 1f);
