@@ -1576,6 +1576,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b814f3441a7240946923c8f2a1117e05, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  tilePositions: []
 --- !u!4 &1325182642
 Transform:
   m_ObjectHideFlags: 0
@@ -2634,7 +2635,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6469293300787016807, guid: 13a7297d6cd6749479218eb78822a026, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 5
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6469293300787016807, guid: 13a7297d6cd6749479218eb78822a026, type: 3}
       propertyPath: m_LocalPosition.y
@@ -2642,7 +2643,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6469293300787016807, guid: 13a7297d6cd6749479218eb78822a026, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 5
+      value: 12
       objectReference: {fileID: 0}
     - target: {fileID: 6469293300787016807, guid: 13a7297d6cd6749479218eb78822a026, type: 3}
       propertyPath: m_LocalRotation.w

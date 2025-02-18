@@ -29,11 +29,11 @@ public class MageEnemy : MonoBehaviour, EnemyAI
         else {
             if (Vector2.Distance(playerPosition, character.GetPosition()) > 5) {
                 Debug.Log("MageEnemy: Moving closer to the player");
-                float closestDistance = Vector2.Distance(character.GetPosition(), playerPosition);
+                float closestDistance = float.MaxValue;
                 Vector2 closestVector = character.GetPosition();
 
                 foreach (Vector2 position in availablePositions) {
-                    float calculatedDistance = Vector2.Distance(position, playerPosition);
+                    float calculatedDistance = gameManager.groundManager.FindShortestPath(gameManager.groundManager.tilePositions, position, playerPosition).Count;
                     if (calculatedDistance < closestDistance) {
                         closestDistance = calculatedDistance;
                         closestVector = position;
@@ -47,7 +47,7 @@ public class MageEnemy : MonoBehaviour, EnemyAI
                 Vector2 furthestVector = playerPosition;
 
                 foreach (Vector2 position in availablePositions) {
-                    float calculatedDistance = Vector2.Distance(position, playerPosition);
+                    float calculatedDistance = gameManager.groundManager.FindShortestPath(gameManager.groundManager.tilePositions, position, playerPosition).Count;
                     if (calculatedDistance > furthestDistance) {
                         furthestDistance = calculatedDistance;
                         furthestVector = position;
