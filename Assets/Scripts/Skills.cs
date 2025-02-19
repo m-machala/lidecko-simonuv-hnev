@@ -29,16 +29,41 @@ public class Skills : MonoBehaviour
     public int boltCost = 4;
 
     public AttackMode attackMode = AttackMode.Melee;
+
+    private AudioSource audioSource;
+    private AudioClip melee;
+    private AudioClip hurt;
+    private AudioClip spear;
+    private AudioClip cast;
+    private AudioClip fireball;
+    private AudioClip iceball;
+    private AudioClip healing;
+    private AudioClip bolt;
+
+
+    public void Start() {
+        audioSource = GetComponent<AudioSource>();
+        melee = Resources.Load<AudioClip>("Audio/melee");
+        hurt = Resources.Load<AudioClip>("Audio/hurt");
+        spear = Resources.Load<AudioClip>("Audio/spear");
+        cast = Resources.Load<AudioClip>("Audio/cast");
+        // TODO: add fireball sound
+        iceball = Resources.Load<AudioClip>("Audio/iceball");
+        healing = Resources.Load<AudioClip>("Audio/heal");
+        bolt = Resources.Load<AudioClip>("Audio/bolt"); 
+    }
      
     public void turnEnder() {
         mana = Math.Min(manaRegen + mana, maxMana);
     }
 
     public void meleeAttack(Skills target) {
+        audioSource.PlayOneShot(melee);
         target.health -= meleeDamage;       
     }
 
     public void arrowAttack(Skills target) {
+        audioSource.PlayOneShot(spear);
         if (UnityEngine.Random.Range(0f, 1f) <= arrowHitChance) {
             target.health -= arrowDamage;
         }
