@@ -1,7 +1,9 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
+using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Scripting;
@@ -111,10 +113,11 @@ public class GameManager : MonoBehaviour
         groundManager.TintTiles(reachableTiles, Color.red);
     }
 
-    private IEnumerator TriggerGetHitWithDelay(Animator enemyAnimator, float delay)
+    private IEnumerator triggerAction(Animator playerAnimator, Animator enemyAnimator, float getHitOffset, float projectileDistanceTime=0.0f)
     {
-        yield return new WaitForSeconds(delay);
-        enemyAnimator.SetTrigger("getHit");
+        playerAnimator.SetTrigger("attackMelee");
+        yield return new WaitForSeconds(getHitOffset);
+        enemyAnimator.SetTrigger("getHit");                 
     }
 
     public void TileClicked(UnityEngine.Vector2 position) {
@@ -185,14 +188,13 @@ public class GameManager : MonoBehaviour
                                 if (directionToPlayer !=  UnityEngine.Vector3.zero)
                                 {
                                     enemy.Item1.transform.rotation = UnityEngine.Quaternion.LookRotation(directionToPlayer);
-                                }                        
-                                
-                                player.animator.SetTrigger("attackMelee");
+                                }                                                     
                                 playerSkills.meleeAttack(enemy.Item3);
-                        
-                                float attackAnimationLength = player.animator.GetCurrentAnimatorStateInfo(0).length;
-                                player.StartCoroutine(TriggerGetHitWithDelay(enemy.Item1.animator, attackAnimationLength));
-                                endWaitTime = 1f;
+                                float playerAttackAnimationLength = player.animator.GetCurrentAnimatorStateInfo(0).length;
+                                float enemyGetHitAnimationLength = enemy.Item1.animator.GetCurrentAnimatorStateInfo(0).length;
+                                float offset = 0.4f;                                
+                                endWaitTime = Math.Max(playerAttackAnimationLength, enemyGetHitAnimationLength + offset);
+                                player.StartCoroutine(triggerAction(player.animator, enemy.Item1.animator, offset));      
                             }
                         }
                         break;
@@ -272,8 +274,8 @@ public class GameManager : MonoBehaviour
                 manabar.SetMana(player.GetComponent<Skills>().mana);
                 spearCounter.SetSpears(player.GetComponent<Skills>().arrowCount);
                 actionSelection.DisableIcons();
-                skipButton.DisableSkip();
-                Invoke("ActionComplete", endWaitTime);
+                skipButton.DisableSkip();   
+                Invoke("ActionComplete", endWaitTime);               
             }
         }
         Debug.Log(gameState);
