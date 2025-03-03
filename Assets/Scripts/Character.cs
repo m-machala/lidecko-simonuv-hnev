@@ -12,6 +12,14 @@ public class Character : MonoBehaviour
     Vector2 previousPosition;
     public bool moving = false;
     float elapsedMovementTime = 0f;
+    private AudioSource audioSource;
+    private AudioClip walk;
+
+    public void Start()
+    {
+        audioSource = GetComponent<AudioSource>();
+        walk = Resources.Load<AudioClip>("Audio/walk");
+    }
 
     public void setGameManager(GameManager gameManager) {
         this.gameManager = gameManager;
@@ -27,7 +35,8 @@ public class Character : MonoBehaviour
         return modifiedPosition;
     }
 
-    public void Move(List<Vector2> positions, float stepTime) {        
+    public void Move(List<Vector2> positions, float stepTime) {     
+        audioSource.PlayOneShot(walk);   
         foreach (Vector2 position in positions) {
             nextPositions.Add((position, stepTime));
         }
