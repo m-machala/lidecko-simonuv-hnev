@@ -47,7 +47,7 @@ public class Skills : MonoBehaviour
         hurt = Resources.Load<AudioClip>("Audio/hurt");
         spear = Resources.Load<AudioClip>("Audio/spear");
         cast = Resources.Load<AudioClip>("Audio/cast");
-        // TODO: add fireball sound
+        fireball = Resources.Load<AudioClip>("Audio/fireball");
         iceball = Resources.Load<AudioClip>("Audio/iceball");
         healing = Resources.Load<AudioClip>("Audio/heal");
         bolt = Resources.Load<AudioClip>("Audio/bolt"); 
@@ -63,11 +63,13 @@ public class Skills : MonoBehaviour
     }
 
     public void arrowAttack(Skills target) {
-        audioSource.PlayOneShot(spear);
-        if (UnityEngine.Random.Range(0f, 1f) <= arrowHitChance) {
-            target.health -= arrowDamage;
+        if (arrowCount > 0) {
+            audioSource.PlayOneShot(spear);
+            if (UnityEngine.Random.Range(0f, 1f) <= arrowHitChance) {
+                target.health -= arrowDamage;
+            }
+            arrowCount--;
         }
-        arrowCount--;
     }
 
     public void fireballAttack(Skills mainTarget, List<Skills> surroundingTargets) {
@@ -77,11 +79,19 @@ public class Skills : MonoBehaviour
                 target.health -= fireballSurroundingDamage;
             }
             mainTarget.health -= fireballMainDamage;
+
+            if (GetComponent<Character>().gameManager.gameState == GameManager.GameState.PlayerAction) {
+                audioSource.PlayOneShot(fireball);
+            } 
+            else {
+                audioSource.PlayOneShot(iceball);
+            }
         }
     }
 
     public void boltAttack(List<Skills> targets) {
         if (mana >= boltCost) {
+            audioSource.PlayOneShot(bolt);
             mana -= boltCost;
             foreach (Skills target in targets) {
                 target.health -= boltDamage;
@@ -91,7 +101,8 @@ public class Skills : MonoBehaviour
 
     public void heal() {
         if (mana >= healCost) {
-            Math.Min(health + healStrength, MaxHealth);
+            audioSource.PlayOneShot(healing);
+            health += Math.Min(health + healStrength, MaxHealth);
             mana -= healCost;
         }
     }
