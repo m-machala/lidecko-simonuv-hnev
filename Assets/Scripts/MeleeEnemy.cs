@@ -45,9 +45,6 @@ public class MeleeEnemy : MonoBehaviour, EnemyAI
         character.Move(pathToGoal, 0.2f);
     }
 
-
-
-
     public void attack()
     {
         var character = GetComponent<Character>();
@@ -60,17 +57,16 @@ public class MeleeEnemy : MonoBehaviour, EnemyAI
             if (directionToAttacker != Vector3.zero) {
                 gameManager.player.transform.rotation = Quaternion.LookRotation(directionToAttacker);
             }              
-            GetComponent<Skills>().meleeAttack(gameManager.player.GetComponent<Skills>());
-            animator.SetTrigger("attackMelee");
-            
-            float attackAnimationLength = animator.GetCurrentAnimatorStateInfo(0).length;            
-            StartCoroutine(TriggerGetHitWithDelay(gameManager.player.animator, attackAnimationLength));
+            GetComponent<Skills>().meleeAttack(gameManager.player.GetComponent<Skills>());            
+            float offset = 0.85f;           
+            gameManager.player.StartCoroutine(triggerAction(character.animator, gameManager.player.animator, offset));
         }
     }
 
-    private IEnumerator TriggerGetHitWithDelay(Animator playerAnimator, float delay)
+    private IEnumerator triggerAction(Animator attackerAnimation, Animator enemyAnimator, float getHitOffset, float projectileDistanceTime=0.0f)
     {
-        yield return new WaitForSeconds(delay);
-        playerAnimator.SetTrigger("getHit");
+        attackerAnimation.SetTrigger("attackMelee");
+        yield return new WaitForSeconds(getHitOffset);
+        enemyAnimator.SetTrigger("getHit");                 
     }
 }
