@@ -168,6 +168,7 @@ public class GameManager : MonoBehaviour
             {   
                 animator = GetComponentInChildren<Animator>(); 
                 groundManager.UntintAllTiles();
+                float playerAttackAnimationLength = player.animator.GetCurrentAnimatorStateInfo(0).length;
                 float endWaitTime = 0f;
                 
                 switch (attackMode) {
@@ -189,8 +190,7 @@ public class GameManager : MonoBehaviour
                                 {
                                     enemy.Item1.transform.rotation = UnityEngine.Quaternion.LookRotation(directionToPlayer);
                                 }                                                     
-                                playerSkills.meleeAttack(enemy.Item3);
-                                float playerAttackAnimationLength = player.animator.GetCurrentAnimatorStateInfo(0).length;
+                                playerSkills.meleeAttack(enemy.Item3);                                
                                 float enemyGetHitAnimationLength = enemy.Item1.animator.GetCurrentAnimatorStateInfo(0).length;
                                 float offset = 0.4f;                                
                                 endWaitTime = Math.Max(playerAttackAnimationLength, enemyGetHitAnimationLength + offset);
@@ -387,6 +387,8 @@ public class GameManager : MonoBehaviour
 
     void Update()
     {
+        animator = GetComponentInChildren<Animator>();         
+
         switch (gameState) {
             case GameState.PlayerMoving:
                 /*if (Input.GetKeyDown(KeyCode.Backspace))
@@ -466,8 +468,13 @@ public class GameManager : MonoBehaviour
                             enemy.Item2.attack();
                             gameState = GameState.EnemyMoving;
                             enemy.Item3.turnEnder();
-                            enemyHasAttacked = true;                            
-                            attackDelayTimer = 0.75f; // Delay after attack
+                            enemyHasAttacked = true;
+                            
+                            float playerAttackAnimationLength = player.animator.GetCurrentAnimatorStateInfo(0).length;
+                            float enemyAttackAnimationLength = enemy.Item1.animator.GetCurrentAnimatorStateInfo(0).length;
+                            float getHitOffset = 0.4f;
+                            attackDelayTimer = Math.Max(playerAttackAnimationLength + getHitOffset, enemyAttackAnimationLength);
+
                             healthbar.SetHealth(player.GetComponent<Skills>().health);
                         } else {
                             attackDelayTimer -= Time.deltaTime;
@@ -490,7 +497,7 @@ public class GameManager : MonoBehaviour
                 break;
             case GameState.EnemyAction:
                 if (waiting) break;
-                Invoke("ReadyToMove", 1f);
+                Invoke("ReadyToMove", 1.0f);
                 waiting = true;
                 break;
         }
