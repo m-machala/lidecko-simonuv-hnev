@@ -1,7 +1,9 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
+using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Scripting;
@@ -111,10 +113,11 @@ public class GameManager : MonoBehaviour
         groundManager.TintTiles(reachableTiles, Color.red);
     }
 
-    private IEnumerator TriggerGetHitWithDelay(Animator enemyAnimator, float delay)
+    private IEnumerator triggerAction(Animator playerAnimator, Animator enemyAnimator, float getHitOffset, float projectileDistanceTime=0.0f)
     {
-        yield return new WaitForSeconds(delay);
-        enemyAnimator.SetTrigger("getHit");
+        playerAnimator.SetTrigger("attackMelee");
+        yield return new WaitForSeconds(getHitOffset);
+        enemyAnimator.SetTrigger("getHit");                 
     }
 
     public void TileClicked(UnityEngine.Vector2 position) {
@@ -185,14 +188,13 @@ public class GameManager : MonoBehaviour
                                 if (directionToPlayer !=  UnityEngine.Vector3.zero)
                                 {
                                     enemy.Item1.transform.rotation = UnityEngine.Quaternion.LookRotation(directionToPlayer);
-                                }                        
-                                
-                                player.animator.SetTrigger("attackMelee");
+                                }                                                     
                                 playerSkills.meleeAttack(enemy.Item3);
-                        
-                                float attackAnimationLength = player.animator.GetCurrentAnimatorStateInfo(0).length;
-                                player.StartCoroutine(TriggerGetHitWithDelay(enemy.Item1.animator, attackAnimationLength));
-                                endWaitTime = 1f;
+                                float playerAttackAnimationLength = player.animator.GetCurrentAnimatorStateInfo(0).length;
+                                float enemyGetHitAnimationLength = enemy.Item1.animator.GetCurrentAnimatorStateInfo(0).length;
+                                float offset = 0.4f;                                
+                                endWaitTime = Math.Max(playerAttackAnimationLength, enemyGetHitAnimationLength + offset);
+                                player.StartCoroutine(triggerAction(player.animator, enemy.Item1.animator, offset));      
                             }
                         }
                         break;
@@ -259,7 +261,7 @@ public class GameManager : MonoBehaviour
 
                         playerSkills.boltAttack(targets);
                         break;
-
+                        
                     default:
                         if (playerSkills.mana < playerSkills.healCost) return;
                         playerSkills.heal();
@@ -272,8 +274,8 @@ public class GameManager : MonoBehaviour
                 manabar.SetMana(player.GetComponent<Skills>().mana);
                 spearCounter.SetSpears(player.GetComponent<Skills>().arrowCount);
                 actionSelection.DisableIcons();
-                skipButton.DisableSkip();
-                Invoke("ActionComplete", endWaitTime);
+                skipButton.DisableSkip();   
+                Invoke("ActionComplete", endWaitTime);               
             }
         }
         Debug.Log(gameState);
@@ -284,15 +286,12 @@ public class GameManager : MonoBehaviour
         {
             player.GetPosition(),
         };
-
         foreach (var enemy in enemies) {
-            blockedPositions.Add(enemy.Item1.GetPosition());
-            
+            blockedPositions.Add(enemy.Item1.GetPosition());            
             if (enemy.Item1.nextPositions.Count > 0) {
                 blockedPositions.Add(enemy.Item1.nextPositions.Last().Item1);
             }
         }
-
         return blockedPositions;
     }
 
@@ -303,7 +302,6 @@ public class GameManager : MonoBehaviour
             actionSelection = FindObjectOfType<ActionSelection>();
             yield return null;
         }
-
         Debug.Log("ActionSelection byl nalezen v GameManageru.");
     }
 
@@ -314,9 +312,7 @@ public class GameManager : MonoBehaviour
             healthbar = FindObjectOfType<Healthbar>();
             yield return null;
         }
-
         healthbar.SetMaxHealth(player.GetComponent<Skills>().MaxHealth);
-
         Debug.Log("Healthbar byl nalezen v GameManageru.");
     }
 
@@ -328,9 +324,7 @@ public class GameManager : MonoBehaviour
             manabar = FindObjectOfType<Manabar>();
             yield return null;
         }
-
         manabar.SetMaxMana(player.GetComponent<Skills>().maxMana);
-
         Debug.Log("Manabar byl nalezen v GameManageru.");
     }
 
@@ -341,9 +335,7 @@ public class GameManager : MonoBehaviour
             spearCounter = FindObjectOfType<SpearCounter>();
             yield return null;
         }
-
         spearCounter.SetSpears(player.GetComponent<Skills>().arrowCount);
-
         Debug.Log("SpearCount byl nalezen v GameManageru.");
     }
 
@@ -362,160 +354,10 @@ public class GameManager : MonoBehaviour
     {
         groundManager.setGameManager(this);
         player.setGameManager(this);
-        List<UnityEngine.Vector2> obstaclePositions = new List<UnityEngine.Vector2>
-        {
-            new UnityEngine.Vector2(0, 0),
-            new UnityEngine.Vector2(0, 1),
-            new UnityEngine.Vector2(0, 23),
-            new UnityEngine.Vector2(0, 24),
-
-            new UnityEngine.Vector2(1, 0),
-            new UnityEngine.Vector2(1, 24),
-
-            new UnityEngine.Vector2(2, 4),
-            new UnityEngine.Vector2(2, 9),
-            new UnityEngine.Vector2(2, 15),
-            new UnityEngine.Vector2(2, 20),
-
-            new UnityEngine.Vector2(3, 4),
-            new UnityEngine.Vector2(3, 9),
-            new UnityEngine.Vector2(3, 15),
-            new UnityEngine.Vector2(3, 20),
-
-            new UnityEngine.Vector2(4, 2),
-            new UnityEngine.Vector2(4, 3),
-            new UnityEngine.Vector2(4, 4),
-            new UnityEngine.Vector2(4, 9),
-            new UnityEngine.Vector2(4, 15),
-            new UnityEngine.Vector2(4, 20),
-            new UnityEngine.Vector2(4, 21),
-            new UnityEngine.Vector2(4, 22),
-
-            new UnityEngine.Vector2(7, 4),
-            new UnityEngine.Vector2(7, 12),
-            new UnityEngine.Vector2(7, 20),
-
-            new UnityEngine.Vector2(8, 4),
-            new UnityEngine.Vector2(8, 11),
-            new UnityEngine.Vector2(8, 12),
-            new UnityEngine.Vector2(8, 13),
-            new UnityEngine.Vector2(8, 20),
-
-            new UnityEngine.Vector2(9, 4),
-            new UnityEngine.Vector2(9, 10),
-            new UnityEngine.Vector2(9, 11),
-            new UnityEngine.Vector2(9, 12),
-            new UnityEngine.Vector2(9, 13),
-            new UnityEngine.Vector2(9, 14),
-            new UnityEngine.Vector2(9, 20),
-
-            new UnityEngine.Vector2(10, 4),
-            new UnityEngine.Vector2(10, 9),
-            new UnityEngine.Vector2(10, 10),
-            new UnityEngine.Vector2(10, 11),
-            new UnityEngine.Vector2(10, 12),
-            new UnityEngine.Vector2(10, 13),
-            new UnityEngine.Vector2(10, 14),
-            new UnityEngine.Vector2(10, 15),
-            new UnityEngine.Vector2(10, 20),
-
-            new UnityEngine.Vector2(11, 4),
-            new UnityEngine.Vector2(11, 8),
-            new UnityEngine.Vector2(11, 9),
-            new UnityEngine.Vector2(11, 10),
-            new UnityEngine.Vector2(11, 11),
-            new UnityEngine.Vector2(11, 12),
-            new UnityEngine.Vector2(11, 13),
-            new UnityEngine.Vector2(11, 14),
-            new UnityEngine.Vector2(11, 15),
-            new UnityEngine.Vector2(11, 16),
-            new UnityEngine.Vector2(11, 20),
-
-            new UnityEngine.Vector2(12, 4),
-            new UnityEngine.Vector2(12, 7),
-            new UnityEngine.Vector2(12, 8),
-            new UnityEngine.Vector2(12, 9),
-            new UnityEngine.Vector2(12, 10),
-            new UnityEngine.Vector2(12, 11),
-            new UnityEngine.Vector2(12, 12),
-            new UnityEngine.Vector2(12, 13),
-            new UnityEngine.Vector2(12, 14),
-            new UnityEngine.Vector2(12, 15),
-            new UnityEngine.Vector2(12, 16),
-            new UnityEngine.Vector2(12, 17),
-            new UnityEngine.Vector2(12, 20),
-
-            new UnityEngine.Vector2(13, 4),
-            new UnityEngine.Vector2(13, 8),
-            new UnityEngine.Vector2(13, 9),
-            new UnityEngine.Vector2(13, 10),
-            new UnityEngine.Vector2(13, 11),
-            new UnityEngine.Vector2(13, 12),
-            new UnityEngine.Vector2(13, 13),
-            new UnityEngine.Vector2(13, 14),
-            new UnityEngine.Vector2(13, 15),
-            new UnityEngine.Vector2(13, 16),
-            new UnityEngine.Vector2(13, 20),
-
-            new UnityEngine.Vector2(14, 4),
-            new UnityEngine.Vector2(14, 9),
-            new UnityEngine.Vector2(14, 10),
-            new UnityEngine.Vector2(14, 11),
-            new UnityEngine.Vector2(14, 12),
-            new UnityEngine.Vector2(14, 13),
-            new UnityEngine.Vector2(14, 14),
-            new UnityEngine.Vector2(14, 15),
-            new UnityEngine.Vector2(14, 20),
-
-            new UnityEngine.Vector2(15, 4),
-            new UnityEngine.Vector2(15, 10),
-            new UnityEngine.Vector2(15, 11),
-            new UnityEngine.Vector2(15, 12),
-            new UnityEngine.Vector2(15, 13),
-            new UnityEngine.Vector2(15, 14),
-            new UnityEngine.Vector2(15, 20),
-
-            new UnityEngine.Vector2(16, 4),
-            new UnityEngine.Vector2(16, 11),
-            new UnityEngine.Vector2(16, 12),
-            new UnityEngine.Vector2(16, 13),
-            new UnityEngine.Vector2(16, 20),
-
-            new UnityEngine.Vector2(17, 4),
-            new UnityEngine.Vector2(17, 12),
-            new UnityEngine.Vector2(17, 20),
-
-            new UnityEngine.Vector2(20, 2),
-            new UnityEngine.Vector2(20, 3),
-            new UnityEngine.Vector2(20, 4),
-            new UnityEngine.Vector2(20, 9),
-            new UnityEngine.Vector2(20, 15),
-            new UnityEngine.Vector2(20, 20),
-            new UnityEngine.Vector2(20, 21),
-            new UnityEngine.Vector2(20, 22),
-
-            new UnityEngine.Vector2(21, 4),
-            new UnityEngine.Vector2(21, 9),
-            new UnityEngine.Vector2(21, 15),
-            new UnityEngine.Vector2(21, 20),
-
-            new UnityEngine.Vector2(22, 4),
-            new UnityEngine.Vector2(22, 9),
-            new UnityEngine.Vector2(22, 15),
-            new UnityEngine.Vector2(22, 20),
-
-            new UnityEngine.Vector2(23, 0),
-            new UnityEngine.Vector2(23, 24),
-
-            new UnityEngine.Vector2(24, 0),
-            new UnityEngine.Vector2(24, 1),
-            new UnityEngine.Vector2(24, 23),
-            new UnityEngine.Vector2(24, 24),
-        };
+        List<UnityEngine.Vector2> obstaclePositions = ObstacleData.Positions;   
         
         groundManager.SpawnTiles(25, 25, groundPrefabs, obstaclePrefabs, obstaclePositions);
-        player.gameObject.AddComponent<Skills>();
-        
+        player.gameObject.AddComponent<Skills>();        
         
         var testEnemy = Instantiate(meleeEnemyPrefab, new UnityEngine.Vector3(2f, 1.2f, 2f), UnityEngine.Quaternion.identity);
         enemies.Add((testEnemy.GetComponent<Character>(), testEnemy.GetComponent<EnemyAI>(), testEnemy.GetComponent<Skills>()));
@@ -646,7 +488,6 @@ public class GameManager : MonoBehaviour
                     }
                 }
                 break;
-
             case GameState.EnemyAction:
                 if (waiting) break;
                 Invoke("ReadyToMove", 1f);
