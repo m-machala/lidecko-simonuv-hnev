@@ -113,9 +113,9 @@ public class GameManager : MonoBehaviour
         groundManager.TintTiles(reachableTiles, Color.red);
     }
 
-    private IEnumerator triggerAction(Animator playerAnimator, Animator enemyAnimator, float getHitOffset, float projectileDistanceTime=0.0f)
+    private IEnumerator triggerAction(Animator attackerAnimation, Animator enemyAnimator, float getHitOffset, float projectileDistanceTime=0.0f)
     {
-        playerAnimator.SetTrigger("attackMelee");
+        attackerAnimation.SetTrigger("attackMelee");
         yield return new WaitForSeconds(getHitOffset);
         enemyAnimator.SetTrigger("getHit");                 
     }
@@ -385,67 +385,21 @@ public class GameManager : MonoBehaviour
         StartCoroutine(WaitForSkip());
     }
 
-    void Update()
+    void Update()    
     {
+        float endWaitTime = 0f;
+        animator = GetComponentInChildren<Animator>();        
+
         switch (gameState) {
-            case GameState.PlayerMoving:
-                /*if (Input.GetKeyDown(KeyCode.Backspace))
-                { // Skip movement
-                    Debug.Log("clicledus");
-                    groundManager.UntintAllTiles();
-                    FightRange();
-                    FinishedMoving();
-                    Debug.Log(gameState);
-                }   */
-                break;
-
-            case GameState.PlayerAction:
-                if (waiting) {
-                    break;
-                }
-                /*if (Input.GetKeyDown(KeyCode.Tab))
-                { // Toggle attack mode
-                    player.GetComponent<Skills>().ToggleAttackMode();
-                    groundManager.UntintAllTiles();
-                    FightRange();
-                }
-
-                if (Input.GetKeyDown(KeyCode.Q))
-                { // Toggle fireball mode
-                    player.GetComponent<Skills>().ToggleFireball();
-                    groundManager.UntintAllTiles();
-                    FightRange();
-                }
-
-                if (Input.GetKeyDown(KeyCode.W))
-                { // Toggle bolt mode
-                    player.GetComponent<Skills>().ToggleBolt();
-                    groundManager.UntintAllTiles();
-                    FightRange();
-                }
-
-                if (Input.GetKeyDown(KeyCode.E))
-                { // Toggle heal mode
-                    player.GetComponent<Skills>().ToggleHeal();
-                    groundManager.UntintAllTiles();
-                    FightRange();
-                }*/
-
-                /*if (Input.GetKeyDown(KeyCode.Backspace))
-                { // Skip action phase
-                    Debug.Log("Clicked");
-                    groundManager.UntintAllTiles();
-                    Debug.Log(gameState);
-                    Invoke("ActionComplete", 1f);
-                    waiting = true;
-                }*/
-                break;
-
             case GameState.EnemyMoving:
-                // Process enemies sequentially: one enemy moves then attacks before moving on.
                 if (enemyTurnIndex < enemies.Count)
                 {
                     var enemy = enemies[enemyTurnIndex];
+                    float enemyAttackAnimationLength = enemy.Item1.animator.GetCurrentAnimatorStateInfo(0).length;
+                    float playerGetHitAnimationLength = player.animator.GetCurrentAnimatorStateInfo(0).length;
+                    float offset = 0.4f;                                
+                    endWaitTime = Math.Max(enemyAttackAnimationLength, playerGetHitAnimationLength + offset);
+
                     if (enemy.Item3.health <= 0) {
                         Debug.Log("Enemy died");
                         Destroy(enemy.Item1.gameObject);
@@ -460,25 +414,19 @@ public class GameManager : MonoBehaviour
                         enemyTurnMoveInitiated = true;
                     }
                     if (enemyTurnMoveInitiated && !enemy.Item1.moving) {
-                        if (!enemyHasAttacked) {
-                            Debug.Log("Enemy " + enemyTurnIndex + " attacking");
-                            gameState = GameState.EnemyAction;
-                            enemy.Item2.attack();
+                        if (!enemyHasAttacked) {                        
+                            Debug.Log("Enemy " + enemyTurnIndex + " attacking");                            
+                            enemy.Item2.attack();                                                         
                             gameState = GameState.EnemyMoving;
                             enemy.Item3.turnEnder();
-                            enemyHasAttacked = true;                            
-                            attackDelayTimer = 0.75f; // Delay after attack
-                            healthbar.SetHealth(player.GetComponent<Skills>().health);
-                        } else {
-                            attackDelayTimer -= Time.deltaTime;
-                            if (attackDelayTimer <= 0f) {
-                                enemyTurnIndex++;
-                                enemyTurnMoveInitiated = false;
-                                enemyHasAttacked = false;
-                            }
+                            enemyHasAttacked = true;
+                            healthbar.SetHealth(player.GetComponent<Skills>().health);                                                        
+                            Invoke("ProcessNextEnemyTurn", endWaitTime);                           
                         }
                     }
-                } else {
+                } 
+                else 
+                {
                     if (player.GetComponent<Skills>().health <= 0) {
                         Debug.Log("Game over");
                         gameState = GameState.GameOver;
@@ -495,4 +443,12 @@ public class GameManager : MonoBehaviour
                 break;
         }
     }
+
+    void ProcessNextEnemyTurn()
+    {
+        enemyTurnIndex++;
+        enemyTurnMoveInitiated = false;
+        enemyHasAttacked = false;
+    }
+
 }
