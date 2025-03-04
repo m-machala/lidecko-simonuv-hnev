@@ -356,24 +356,24 @@ public class GameManager : MonoBehaviour
         player.setGameManager(this);
         List<UnityEngine.Vector2> obstaclePositions = ObstacleData.Positions;   
         
-        groundManager.SpawnTiles(25, 25, groundPrefabs, obstaclePrefabs, obstaclePositions);
+        groundManager.SpawnTiles(15, 15, groundPrefabs, obstaclePrefabs, obstaclePositions);
         player.gameObject.AddComponent<Skills>();        
         
-        var testEnemy = Instantiate(meleeEnemyPrefab, new UnityEngine.Vector3(2f, 1.2f, 2f), UnityEngine.Quaternion.identity);
+        var testEnemy = Instantiate(meleeEnemyPrefab, new UnityEngine.Vector3(1f, 1.2f, 1f), UnityEngine.Quaternion.identity);
         enemies.Add((testEnemy.GetComponent<Character>(), testEnemy.GetComponent<EnemyAI>(), testEnemy.GetComponent<Skills>()));
-        testEnemy = Instantiate(meleeEnemyPrefab, new UnityEngine.Vector3(2f, 1.2f, 22f), UnityEngine.Quaternion.identity);
+        testEnemy = Instantiate(meleeEnemyPrefab, new UnityEngine.Vector3(13f, 1.2f, 1f), UnityEngine.Quaternion.identity);
         enemies.Add((testEnemy.GetComponent<Character>(), testEnemy.GetComponent<EnemyAI>(), testEnemy.GetComponent<Skills>()));
-        testEnemy = Instantiate(tankEnemyPrefab, new UnityEngine.Vector3(3f, 1.2f, 7f), UnityEngine.Quaternion.identity);
+        testEnemy = Instantiate(tankEnemyPrefab, new UnityEngine.Vector3(1f, 1.2f, 5f), UnityEngine.Quaternion.identity);
         enemies.Add((testEnemy.GetComponent<Character>(), testEnemy.GetComponent<EnemyAI>(), testEnemy.GetComponent<Skills>()));
-        testEnemy = Instantiate(tankEnemyPrefab, new UnityEngine.Vector3(3f, 1.2f, 17f), UnityEngine.Quaternion.identity);
+        testEnemy = Instantiate(tankEnemyPrefab, new UnityEngine.Vector3(13f, 1.2f, 5f), UnityEngine.Quaternion.identity);
         enemies.Add((testEnemy.GetComponent<Character>(), testEnemy.GetComponent<EnemyAI>(), testEnemy.GetComponent<Skills>()));
-        testEnemy = Instantiate(archerEnemyPrefab, new UnityEngine.Vector3(21f, 1.2f, 7f), UnityEngine.Quaternion.identity);
+        testEnemy = Instantiate(archerEnemyPrefab, new UnityEngine.Vector3(1f, 1.2f, 9f), UnityEngine.Quaternion.identity);
         enemies.Add((testEnemy.GetComponent<Character>(), testEnemy.GetComponent<EnemyAI>(), testEnemy.GetComponent<Skills>()));
-        testEnemy = Instantiate(archerEnemyPrefab, new UnityEngine.Vector3(21f, 1.2f, 17f), UnityEngine.Quaternion.identity);
+        testEnemy = Instantiate(archerEnemyPrefab, new UnityEngine.Vector3(13f, 1.2f, 9f), UnityEngine.Quaternion.identity);
         enemies.Add((testEnemy.GetComponent<Character>(), testEnemy.GetComponent<EnemyAI>(), testEnemy.GetComponent<Skills>()));
-        testEnemy = Instantiate(mageEnemyPrefab, new UnityEngine.Vector3(22f, 1.2f, 2f), UnityEngine.Quaternion.identity);
+        testEnemy = Instantiate(mageEnemyPrefab, new UnityEngine.Vector3(1f, 1.2f, 13f), UnityEngine.Quaternion.identity);
         enemies.Add((testEnemy.GetComponent<Character>(), testEnemy.GetComponent<EnemyAI>(), testEnemy.GetComponent<Skills>()));
-        testEnemy = Instantiate(mageEnemyPrefab, new UnityEngine.Vector3(22f, 1.2f, 22f), UnityEngine.Quaternion.identity);
+        testEnemy = Instantiate(mageEnemyPrefab, new UnityEngine.Vector3(13f, 1.2f, 13f), UnityEngine.Quaternion.identity);
         enemies.Add((testEnemy.GetComponent<Character>(), testEnemy.GetComponent<EnemyAI>(), testEnemy.GetComponent<Skills>()));
 
         foreach (var enemy in enemies) { enemy.Item1.setGameManager(this); }
