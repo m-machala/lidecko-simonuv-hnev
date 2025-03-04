@@ -23,8 +23,8 @@ public class GroundManager : MonoBehaviour
         gameManager.TileClicked(position);
     }
     public void SpawnTiles(int xCount, int zCount, List<Tile> groundPrefabs, List<Tile> obstaclePrefabs, List<Vector2> obstaclePositions) {
-        for (int x = 0; x < xCount; x++) {
-            for (int z = 0; z < zCount; z++) {
+        for (int x = -1; x <= xCount; x++) {
+            for (int z = -1; z <= zCount; z++) {
                 if (obstaclePositions.Contains(new Vector2(x, z))) {
                     int randomIndex = UnityEngine.Random.Range(0, obstaclePrefabs.Count);
                     Tile newObject = Instantiate(obstaclePrefabs[randomIndex], new Vector3(x, 0, z), defaultRotation);
