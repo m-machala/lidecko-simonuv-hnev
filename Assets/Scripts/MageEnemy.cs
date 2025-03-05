@@ -68,20 +68,14 @@ public class MageEnemy : MonoBehaviour, EnemyAI
     {
         var character = GetComponent<Character>();
         animator = GetComponentInChildren<Animator>();
-        var gameManager = character.gameManager;
-        
-        if (Vector2.Distance(character.GetPosition(), gameManager.player.GetPosition()) <= 5) {
-            GetComponent<Skills>().fireballAttack(gameManager.player.GetComponent<Skills>(), new List<Skills>());
-            animator.SetTrigger("fireballAttack");
+        var gameManager = character.gameManager;      
 
-            float attackAnimationLength = animator.GetCurrentAnimatorStateInfo(0).length * 1.3f;            
-            StartCoroutine(TriggerGetHitWithDelay(gameManager.player.animator, attackAnimationLength));
-        }
-    }
-
-    private IEnumerator TriggerGetHitWithDelay(Animator playerAnimator, float delay)
-    {
-        yield return new WaitForSeconds(delay);
-        playerAnimator.SetTrigger("getHit");
+        Vector3 directionToAttacker = character.transform.position - gameManager.player.transform.position;
+        directionToAttacker.y = 0;    
+        if (directionToAttacker != Vector3.zero) {
+            gameManager.player.transform.rotation = Quaternion.LookRotation(directionToAttacker);
+        }  
+         
+        GetComponent<Skills>().fireballAttack(gameManager.player.GetComponent<Skills>(), new List<Skills>());       
     }
 }

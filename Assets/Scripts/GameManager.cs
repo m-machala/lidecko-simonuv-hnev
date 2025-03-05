@@ -45,8 +45,6 @@ public class GameManager : MonoBehaviour
     private int enemyTurnIndex = 0;
     private bool enemyTurnMoveInitiated = false;
     private bool enemyHasAttacked = false;
-    private float attackDelayTimer = 0f;
-
     public void FinishedMoving() {
         if (gameState == GameState.PlayerMoving) {
             groundManager.UntintAllTiles();
@@ -113,9 +111,9 @@ public class GameManager : MonoBehaviour
         groundManager.TintTiles(reachableTiles, Color.red);
     }
 
-    private IEnumerator triggerAction(Animator attackerAnimation, Animator enemyAnimator, float getHitOffset, float projectileDistanceTime=0.0f)
+    private IEnumerator triggerAction(string attackType, Animator attackerAnimator, Animator enemyAnimator, float getHitOffset, float projectileDistanceTime=0.0f)
     {
-        attackerAnimation.SetTrigger("attackMelee");
+        attackerAnimator.SetTrigger(attackType);
         yield return new WaitForSeconds(getHitOffset);
         enemyAnimator.SetTrigger("getHit");                 
     }
@@ -194,7 +192,7 @@ public class GameManager : MonoBehaviour
                                 float enemyGetHitAnimationLength = enemy.Item1.animator.GetCurrentAnimatorStateInfo(0).length;
                                 float offset = 0.4f;                                
                                 endWaitTime = Math.Max(playerAttackAnimationLength, enemyGetHitAnimationLength + offset);
-                                player.StartCoroutine(triggerAction(player.animator, enemy.Item1.animator, offset));      
+                                player.StartCoroutine(triggerAction("attackMelee", player.animator, enemy.Item1.animator, offset));      
                             }
                         }
                         break;
@@ -388,6 +386,8 @@ public class GameManager : MonoBehaviour
     void Update()    
     {
         float endWaitTime = 0f;
+        float offset = 0f;
+        string attackType = "";
         animator = GetComponentInChildren<Animator>();        
 
         switch (gameState) {
@@ -395,10 +395,6 @@ public class GameManager : MonoBehaviour
                 if (enemyTurnIndex < enemies.Count)
                 {
                     var enemy = enemies[enemyTurnIndex];
-                    float enemyAttackAnimationLength = enemy.Item1.animator.GetCurrentAnimatorStateInfo(0).length;
-                    float playerGetHitAnimationLength = player.animator.GetCurrentAnimatorStateInfo(0).length;
-                    float offset = 0.4f;                                
-                    endWaitTime = Math.Max(enemyAttackAnimationLength, playerGetHitAnimationLength + offset);
 
                     if (enemy.Item3.health <= 0) {
                         Debug.Log("Enemy died");
@@ -414,14 +410,43 @@ public class GameManager : MonoBehaviour
                         enemyTurnMoveInitiated = true;
                     }
                     if (enemyTurnMoveInitiated && !enemy.Item1.moving) {
-                        if (!enemyHasAttacked) {                        
-                            Debug.Log("Enemy " + enemyTurnIndex + " attacking");                            
-                            enemy.Item2.attack();                                                         
-                            gameState = GameState.EnemyMoving;
-                            enemy.Item3.turnEnder();
-                            enemyHasAttacked = true;
-                            healthbar.SetHealth(player.GetComponent<Skills>().health);                                                        
-                            Invoke("ProcessNextEnemyTurn", endWaitTime);                           
+                        if (!enemyHasAttacked) {                             
+                            float realDistance = UnityEngine.Vector2.Distance(enemy.Item1.GetPosition(), player.GetPosition());
+                            float attackRange = 0f;                            
+                            string currentPrefab = enemy.Item1.gameObject.name;
+                            float enemyAttackAnimationLength = enemy.Item1.animator.GetCurrentAnimatorStateInfo(0).length;
+                            float playerGetHitAnimationLength = player.animator.GetCurrentAnimatorStateInfo(0).length;          
+
+                            if (currentPrefab == "Melee Enemy(Clone)") {   
+                                attackType = "attackMelee";                             
+                                attackRange = 1.5f;
+                                offset = 0.85f;       
+                            } else if (currentPrefab == "Tank Enemy(Clone)") {
+                                attackType = "attackMelee"; 
+                                attackRange = 1.5f;
+                                offset = 0.85f;                      
+                            } else if (currentPrefab == "Mage Enemy(Clone)") {
+                                attackType = "attackFireball"; 
+                                attackRange = 5f;
+                                offset = 0.85f;
+                            } else if (currentPrefab == "Archer Enemy(Clone)") {
+                                attackType = "attackRanged"; 
+                                attackRange = 3f;
+                                offset = 0.85f;
+                            }
+
+                            if (attackRange >= realDistance) {
+                                Debug.Log("Enemy " + enemyTurnIndex + " attacking");                          
+                                enemy.Item2.attack();                                                         
+                                gameState = GameState.EnemyMoving;
+                                enemy.Item3.turnEnder();                             
+                                Debug.Log("Current prefab: " + enemy.Item1.gameObject.name);              
+                                enemyHasAttacked = true;                                                            
+                                endWaitTime = Math.Max(enemyAttackAnimationLength, playerGetHitAnimationLength + offset);
+                                player.StartCoroutine(triggerAction(attackType, enemy.Item1.animator, player.animator, offset));
+                                healthbar.SetHealth(player.GetComponent<Skills>().health);                                            
+                            }
+                            Invoke("ProcessNextEnemyTurn", endWaitTime);            
                         }
                     }
                 } 
@@ -442,7 +467,7 @@ public class GameManager : MonoBehaviour
                 waiting = true;
                 break;
         }
-    }
+    }    
 
     void ProcessNextEnemyTurn()
     {
@@ -450,5 +475,4 @@ public class GameManager : MonoBehaviour
         enemyTurnMoveInitiated = false;
         enemyHasAttacked = false;
     }
-
 }
