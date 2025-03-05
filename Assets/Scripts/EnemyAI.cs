@@ -1,4 +1,4 @@
-public interface EnemyAI {
+public interface EnemyAI {    
     public void move();
     public void attack();
 }

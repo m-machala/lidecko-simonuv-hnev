@@ -7,6 +7,7 @@ using UnityEngine;
 public class MeleeEnemy : MonoBehaviour, EnemyAI
 {
     Animator animator;
+    public float attackRange = 1.5f; 
     int movementRange = 2;
     float randomMovementChance = 0.25f;
     public void move() {
@@ -39,8 +40,7 @@ public class MeleeEnemy : MonoBehaviour, EnemyAI
                 }
             }
             goal = closestVector;
-        }
-        Debug.Log(goal);
+        }        
         var pathToGoal = gameManager.groundManager.FindShortestPath(availablePositions, character.GetPosition(), goal);
         character.Move(pathToGoal, 0.2f);
     }
@@ -50,23 +50,13 @@ public class MeleeEnemy : MonoBehaviour, EnemyAI
         var character = GetComponent<Character>();
         animator = GetComponentInChildren<Animator>();
         var gameManager = character.gameManager;
-        
-        if (Vector2.Distance(character.GetPosition(), gameManager.player.GetPosition()) <= 1.5f) {            
-            Vector3 directionToAttacker = character.transform.position - gameManager.player.transform.position;
-            directionToAttacker.y = 0;    
-            if (directionToAttacker != Vector3.zero) {
-                gameManager.player.transform.rotation = Quaternion.LookRotation(directionToAttacker);
-            }              
-            GetComponent<Skills>().meleeAttack(gameManager.player.GetComponent<Skills>());            
-            float offset = 0.85f;           
-            gameManager.player.StartCoroutine(triggerAction(character.animator, gameManager.player.animator, offset));
-        }
-    }
-
-    private IEnumerator triggerAction(Animator attackerAnimation, Animator enemyAnimator, float getHitOffset, float projectileDistanceTime=0.0f)
-    {
-        attackerAnimation.SetTrigger("attackMelee");
-        yield return new WaitForSeconds(getHitOffset);
-        enemyAnimator.SetTrigger("getHit");                 
+                   
+        Vector3 directionToAttacker = character.transform.position - gameManager.player.transform.position;
+        directionToAttacker.y = 0;    
+        if (directionToAttacker != Vector3.zero) {
+            gameManager.player.transform.rotation = Quaternion.LookRotation(directionToAttacker);
+        }  
+                    
+        GetComponent<Skills>().meleeAttack(gameManager.player.GetComponent<Skills>());       
     }
 }
