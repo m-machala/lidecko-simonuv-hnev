@@ -111,11 +111,15 @@ public class GameManager : MonoBehaviour
         groundManager.TintTiles(reachableTiles, Color.red);
     }
 
-    private IEnumerator triggerAction(string attackType, Animator attackerAnimator, Animator enemyAnimator, float getHitOffset, float projectileDistanceTime=0.0f)
+    private IEnumerator triggerAction(string attackType, Animator attackerAnimator, Animator enemyAnimator, float getHitOffset, bool isDead, float projectileDistanceTime = 0.0f)
     {
         attackerAnimator.SetTrigger(attackType);
         yield return new WaitForSeconds(getHitOffset);
-        enemyAnimator.SetTrigger("getHit");                 
+        if (isDead == true) {
+            enemyAnimator.SetTrigger("death"); 
+        } else {
+            enemyAnimator.SetTrigger("getHit");  
+        }                    
     }
 
     public void TileClicked(UnityEngine.Vector2 position) {
@@ -192,7 +196,11 @@ public class GameManager : MonoBehaviour
                                 float enemyGetHitAnimationLength = enemy.Item1.animator.GetCurrentAnimatorStateInfo(0).length;
                                 float offset = 0.4f;                                
                                 endWaitTime = Math.Max(playerAttackAnimationLength, enemyGetHitAnimationLength + offset);
-                                player.StartCoroutine(triggerAction("attackMelee", player.animator, enemy.Item1.animator, offset));      
+                                if (enemy.Item3.health <= 0) { 
+                                    player.StartCoroutine(triggerAction("attackMelee", player.animator, enemy.Item1.animator, offset, true)); 
+                                } else {
+                                    player.StartCoroutine(triggerAction("attackMelee", player.animator, enemy.Item1.animator, offset, false)); 
+                                }     
                             }
                         }
                         break;
@@ -443,8 +451,15 @@ public class GameManager : MonoBehaviour
                                 Debug.Log("Current prefab: " + enemy.Item1.gameObject.name);              
                                 enemyHasAttacked = true;                                                            
                                 endWaitTime = Math.Max(enemyAttackAnimationLength, playerGetHitAnimationLength + offset);
-                                player.StartCoroutine(triggerAction(attackType, enemy.Item1.animator, player.animator, offset));
-                                healthbar.SetHealth(player.GetComponent<Skills>().health);                                            
+
+                                if (enemy.Item3.health <= 0) {                                
+                                    enemy.Item1.StartCoroutine(triggerAction(attackType, enemy.Item1.animator, player.animator, offset, true));    
+                                }
+                                else {
+                                    enemy.Item1.StartCoroutine(triggerAction(attackType, enemy.Item1.animator, player.animator, offset, false));                                    
+                                }
+                                
+                                healthbar.SetHealth(player.GetComponent<Skills>().health);  
                             }
                             Invoke("ProcessNextEnemyTurn", endWaitTime);            
                         }
