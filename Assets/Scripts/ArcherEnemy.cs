@@ -76,6 +76,6 @@ public class ArcherEnemy : MonoBehaviour, EnemyAI
             gameManager.player.transform.rotation = Quaternion.LookRotation(directionToAttacker);
         } 
 
-        GetComponent<Skills>().arrowAttack(gameManager.player.GetComponent<Skills>());
+        GetComponent<Skills>().rangedAttack(gameManager.player.GetComponent<Skills>());
     }
 }

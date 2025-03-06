@@ -25,16 +25,16 @@ public class GameManager : MonoBehaviour
     public GameObject tankEnemyPrefab;
     public GameObject archerEnemyPrefab;
     public GameObject mageEnemyPrefab;
-
     public List<Tile> groundPrefabs;
     public List<Tile> obstaclePrefabs;
     public GroundManager groundManager;
     public ActionSelection actionSelection;
+    public SpearThrow spearThrow;
     public SpearCounter spearCounter;
     public SkipButton skipButton;
     public Healthbar healthbar;
     public Manabar manabar;
-    public Character player;
+    public Character player;    
     public List<(Character, EnemyAI, Skills)> enemies = new List<(Character, EnemyAI, Skills)>();
     Animator animator;
 
@@ -45,6 +45,7 @@ public class GameManager : MonoBehaviour
     private int enemyTurnIndex = 0;
     private bool enemyTurnMoveInitiated = false;
     private bool enemyHasAttacked = false;
+
     public void FinishedMoving() {
         if (gameState == GameState.PlayerMoving) {
             groundManager.UntintAllTiles();
@@ -208,9 +209,15 @@ public class GameManager : MonoBehaviour
                     case AttackMode.Ranged:
                         foreach (var enemy in enemies) {
                             if (enemy.Item1.GetPosition() == position) {
-                                playerSkills.arrowAttack(enemy.Item3);
+                                while (spearThrow == null)
+                                {
+                                    spearThrow = FindObjectOfType<SpearThrow>();                                    
+                                }                                
+                                spearThrow = player.GetComponent<SpearThrow>();
+                                spearThrow.ThrowSpear(player.GetPosition(), enemy.Item1.GetPosition());
+                                playerSkills.rangedAttack(enemy.Item3);                                
                                 endWaitTime = UnityEngine.Vector2.Distance(player.GetPosition(), enemy.Item1.GetPosition()) * 0.5f;
-                            }
+                            }                            
                         }
                         break;
 
@@ -357,7 +364,7 @@ public class GameManager : MonoBehaviour
     }
 
     void Start()
-    {
+    {        
         groundManager.setGameManager(this);
         player.setGameManager(this);
         List<UnityEngine.Vector2> obstaclePositions = ObstacleData.Positions;   
