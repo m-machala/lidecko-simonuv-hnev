@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 8393554044281600904}
   - component: {fileID: -6181123476199401999}
   - component: {fileID: 8775837048607336281}
-  - component: {fileID: 7506194089661605906}
+  - component: {fileID: 1772610866319117385}
   m_Layer: 0
   m_Name: spear
   m_TagString: Untagged
@@ -135,7 +135,7 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
---- !u!114 &7506194089661605906
+--- !u!114 &1772610866319117385
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -144,8 +144,24 @@ MonoBehaviour:
   m_GameObject: {fileID: 8033041429827492445}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e5273b658715a71468b1a80a52d96d4b, type: 3}
+  m_Script: {fileID: 11500000, guid: e7fe3c54405690742b8e26eba623ebd1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  gameState: 0
+  meleeEnemyPrefab: {fileID: 0}
+  tankEnemyPrefab: {fileID: 0}
+  archerEnemyPrefab: {fileID: 0}
+  mageEnemyPrefab: {fileID: 0}
   spearPrefab: {fileID: 8033041429827492445}
-  throwSpeed: 5
+  groundPrefabs: []
+  obstaclePrefabs: []
+  groundManager: {fileID: 0}
+  actionSelection: {fileID: 0}
+  spearScript: {fileID: 0}
+  spearCounter: {fileID: 0}
+  skipButton: {fileID: 0}
+  healthbar: {fileID: 0}
+  manabar: {fileID: 0}
+  player: {fileID: 0}
+  walkDistance: 5
+  waiting: 0

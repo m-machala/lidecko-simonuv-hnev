@@ -28,8 +28,7 @@ public class GameManager : MonoBehaviour
     public List<Tile> groundPrefabs;
     public List<Tile> obstaclePrefabs;
     public GroundManager groundManager;
-    public ActionSelection actionSelection;
-    public SpearThrow spearThrow;
+    public ActionSelection actionSelection; 
     public SpearCounter spearCounter;
     public SkipButton skipButton;
     public Healthbar healthbar;
@@ -208,13 +207,7 @@ public class GameManager : MonoBehaviour
 
                     case AttackMode.Ranged:
                         foreach (var enemy in enemies) {
-                            if (enemy.Item1.GetPosition() == position) {
-                                while (spearThrow == null)
-                                {
-                                    spearThrow = FindObjectOfType<SpearThrow>();                                    
-                                }                                
-                                spearThrow = player.GetComponent<SpearThrow>();
-                                spearThrow.ThrowSpear(player.GetPosition(), enemy.Item1.GetPosition());
+                            if (enemy.Item1.GetPosition() == position) {                               
                                 playerSkills.rangedAttack(enemy.Item3);                                
                                 endWaitTime = UnityEngine.Vector2.Distance(player.GetPosition(), enemy.Item1.GetPosition()) * 0.5f;
                             }                            
