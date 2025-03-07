@@ -210,7 +210,7 @@ public class GameManager : MonoBehaviour
                     case AttackMode.Ranged:
                         foreach (var enemy in enemies) {
                             if (enemy.Item1.GetPosition() == position) {
-                                playerSkills.arrowAttack(enemy.Item3);
+                                playerSkills.rangedAttack(enemy.Item3);
                                 enemy.Item4.UpdateColor();
                                 endWaitTime = UnityEngine.Vector2.Distance(player.GetPosition(), enemy.Item1.GetPosition()) * 0.5f;
                             }                            
