@@ -129,6 +129,7 @@ public class ActionSelection : MonoBehaviour
             healBackg.enabled = true;
             gameManager.player.GetComponent<Skills>().ToggleHeal();
         }
+        gameManager.GetComponent<AudioSource>().Play();
         gameManager.groundManager.UntintAllTiles();
         gameManager.FightRange();
     }
