@@ -16,7 +16,6 @@ GameObject:
   - component: {fileID: 5883884797403038272}
   - component: {fileID: -3274421524184992332}
   - component: {fileID: 4734913015863436738}
-  - component: {fileID: -4768366928295901466}
   m_Layer: 0
   m_Name: Melee Enemy
   m_TagString: Untagged
@@ -169,7 +168,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02b3f17c3dbff3543afff7903085a498, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  attackRange: 1.5
 --- !u!82 &4734913015863436738
 AudioSource:
   m_ObjectHideFlags: 0
@@ -266,18 +264,6 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
---- !u!114 &-4768366928295901466
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8870016961608037706}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 63b5011e93ffe4244912f19e13ac7830, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1001 &5749984275415118985
 PrefabInstance:
   m_ObjectHideFlags: 0

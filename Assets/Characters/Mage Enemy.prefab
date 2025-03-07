@@ -16,7 +16,6 @@ GameObject:
   - component: {fileID: 5883884797403038272}
   - component: {fileID: -3848803627682636998}
   - component: {fileID: 1338747745108702095}
-  - component: {fileID: 8426567182649224581}
   m_Layer: 0
   m_Name: Mage Enemy
   m_TagString: Untagged
@@ -265,18 +264,6 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
---- !u!114 &8426567182649224581
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8870016961608037706}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 63b5011e93ffe4244912f19e13ac7830, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1001 &6921462747898955709
 PrefabInstance:
   m_ObjectHideFlags: 0

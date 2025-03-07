@@ -6,7 +6,6 @@ using System.Numerics;
 using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
-using UnityEngine.SceneManagement; //Screeeeeenus Maxima :)
 using UnityEngine.Scripting;
 using static Skills;
 
@@ -34,8 +33,8 @@ public class GameManager : MonoBehaviour
     public SkipButton skipButton;
     public Healthbar healthbar;
     public Manabar manabar;
-    public Character player;
-    public List<(Character, EnemyAI, Skills, EnemyHealthOrb)> enemies = new List<(Character, EnemyAI, Skills, EnemyHealthOrb)>();
+    public Character player;    
+    public List<(Character, EnemyAI, Skills)> enemies = new List<(Character, EnemyAI, Skills)>();
     Animator animator;
 
     [Range(0, 100)] public int walkDistance = 5;
@@ -193,7 +192,6 @@ public class GameManager : MonoBehaviour
                                     enemy.Item1.transform.rotation = UnityEngine.Quaternion.LookRotation(directionToPlayer);
                                 }                                                     
                                 playerSkills.meleeAttack(enemy.Item3);
-                                enemy.Item4.UpdateColor();
                                 float playerAttackAnimationLength = player.animator.GetCurrentAnimatorStateInfo(0).length;
                                 float enemyGetHitAnimationLength = enemy.Item1.animator.GetCurrentAnimatorStateInfo(0).length;
                                 float offset = 0.4f;                                
@@ -209,9 +207,8 @@ public class GameManager : MonoBehaviour
 
                     case AttackMode.Ranged:
                         foreach (var enemy in enemies) {
-                            if (enemy.Item1.GetPosition() == position) {
-                                playerSkills.arrowAttack(enemy.Item3);
-                                enemy.Item4.UpdateColor();
+                            if (enemy.Item1.GetPosition() == position) {                               
+                                playerSkills.rangedAttack(enemy.Item3);                                
                                 endWaitTime = UnityEngine.Vector2.Distance(player.GetPosition(), enemy.Item1.GetPosition()) * 0.5f;
                             }                            
                         }
@@ -237,11 +234,6 @@ public class GameManager : MonoBehaviour
 
                         if (mainTarget != null) {
                             playerSkills.fireballAttack(mainTarget, surroundingTargets);
-                            mainTarget.GetComponent<EnemyHealthOrb>().UpdateColor();
-
-                            foreach (var enemy in surroundingTargets) {
-                                enemy.GetComponent<EnemyHealthOrb>().UpdateColor();
-                            }
                         }
                         break;
 
@@ -274,9 +266,6 @@ public class GameManager : MonoBehaviour
                         }
 
                         playerSkills.boltAttack(targets);
-                        foreach (var enemy in targets) {
-                            enemy.GetComponent<EnemyHealthOrb>().UpdateColor();
-                        }
                         break;
                         
                     default:
@@ -291,7 +280,7 @@ public class GameManager : MonoBehaviour
                 manabar.SetMana(player.GetComponent<Skills>().mana);
                 spearCounter.SetSpears(player.GetComponent<Skills>().arrowCount);
                 actionSelection.DisableIcons();
-                skipButton.DisableSkip();
+                skipButton.DisableSkip();   
                 Invoke("ActionComplete", endWaitTime);               
             }
         }
@@ -376,24 +365,24 @@ public class GameManager : MonoBehaviour
         groundManager.SpawnTiles(15, 15, groundPrefabs, obstaclePrefabs, obstaclePositions);
         player.gameObject.AddComponent<Skills>();        
         
-        var enemy = Instantiate(meleeEnemyPrefab, new UnityEngine.Vector3(1f, 1.2f, 1f), UnityEngine.Quaternion.identity);
-        enemies.Add((enemy.GetComponent<Character>(), enemy.GetComponent<EnemyAI>(), enemy.GetComponent<Skills>(), enemy.GetComponent<EnemyHealthOrb>()));
-        /*enemy = Instantiate(meleeEnemyPrefab, new UnityEngine.Vector3(13f, 1.2f, 1f), UnityEngine.Quaternion.identity);
-        enemies.Add((enemy.GetComponent<Character>(), enemy.GetComponent<EnemyAI>(), enemy.GetComponent<Skills>(), enemy.GetComponent<EnemyHealthOrb>()));
-        enemy = Instantiate(tankEnemyPrefab, new UnityEngine.Vector3(1f, 1.2f, 5f), UnityEngine.Quaternion.identity);
-        enemies.Add((enemy.GetComponent<Character>(), enemy.GetComponent<EnemyAI>(), enemy.GetComponent<Skills>(), enemy.GetComponent<EnemyHealthOrb>()));*/
-        /*enemy = Instantiate(tankEnemyPrefab, new UnityEngine.Vector3(13f, 1.2f, 5f), UnityEngine.Quaternion.identity);
-        enemies.Add((enemy.GetComponent<Character>(), enemy.GetComponent<EnemyAI>(), enemy.GetComponent<Skills>(), enemy.GetComponent<EnemyHealthOrb>()));
-        enemy = Instantiate(archerEnemyPrefab, new UnityEngine.Vector3(1f, 1.2f, 9f), UnityEngine.Quaternion.identity);
-        enemies.Add((enemy.GetComponent<Character>(), enemy.GetComponent<EnemyAI>(), enemy.GetComponent<Skills>(), enemy.GetComponent<EnemyHealthOrb>()));
-        enemy = Instantiate(archerEnemyPrefab, new UnityEngine.Vector3(13f, 1.2f, 9f), UnityEngine.Quaternion.identity);
-        enemies.Add((enemy.GetComponent<Character>(), enemy.GetComponent<EnemyAI>(), enemy.GetComponent<Skills>(), enemy.GetComponent<EnemyHealthOrb>()));
-        enemy = Instantiate(mageEnemyPrefab, new UnityEngine.Vector3(1f, 1.2f, 13f), UnityEngine.Quaternion.identity);
-        enemies.Add((enemy.GetComponent<Character>(), enemy.GetComponent<EnemyAI>(), enemy.GetComponent<Skills>(), enemy.GetComponent<EnemyHealthOrb>()));
-        enemy = Instantiate(mageEnemyPrefab, new UnityEngine.Vector3(13f, 1.2f, 13f), UnityEngine.Quaternion.identity);
-        enemies.Add((enemy.GetComponent<Character>(), enemy.GetComponent<EnemyAI>(), enemy.GetComponent<Skills>(), enemy.GetComponent<EnemyHealthOrb>()));*/
+        var testEnemy = Instantiate(meleeEnemyPrefab, new UnityEngine.Vector3(1f, 1.2f, 1f), UnityEngine.Quaternion.identity);
+        enemies.Add((testEnemy.GetComponent<Character>(), testEnemy.GetComponent<EnemyAI>(), testEnemy.GetComponent<Skills>()));
+        testEnemy = Instantiate(meleeEnemyPrefab, new UnityEngine.Vector3(13f, 1.2f, 1f), UnityEngine.Quaternion.identity);
+        enemies.Add((testEnemy.GetComponent<Character>(), testEnemy.GetComponent<EnemyAI>(), testEnemy.GetComponent<Skills>()));
+        testEnemy = Instantiate(tankEnemyPrefab, new UnityEngine.Vector3(1f, 1.2f, 5f), UnityEngine.Quaternion.identity);
+        enemies.Add((testEnemy.GetComponent<Character>(), testEnemy.GetComponent<EnemyAI>(), testEnemy.GetComponent<Skills>()));
+        testEnemy = Instantiate(tankEnemyPrefab, new UnityEngine.Vector3(13f, 1.2f, 5f), UnityEngine.Quaternion.identity);
+        enemies.Add((testEnemy.GetComponent<Character>(), testEnemy.GetComponent<EnemyAI>(), testEnemy.GetComponent<Skills>()));
+        testEnemy = Instantiate(archerEnemyPrefab, new UnityEngine.Vector3(1f, 1.2f, 9f), UnityEngine.Quaternion.identity);
+        enemies.Add((testEnemy.GetComponent<Character>(), testEnemy.GetComponent<EnemyAI>(), testEnemy.GetComponent<Skills>()));
+        testEnemy = Instantiate(archerEnemyPrefab, new UnityEngine.Vector3(13f, 1.2f, 9f), UnityEngine.Quaternion.identity);
+        enemies.Add((testEnemy.GetComponent<Character>(), testEnemy.GetComponent<EnemyAI>(), testEnemy.GetComponent<Skills>()));
+        testEnemy = Instantiate(mageEnemyPrefab, new UnityEngine.Vector3(1f, 1.2f, 13f), UnityEngine.Quaternion.identity);
+        enemies.Add((testEnemy.GetComponent<Character>(), testEnemy.GetComponent<EnemyAI>(), testEnemy.GetComponent<Skills>()));
+        testEnemy = Instantiate(mageEnemyPrefab, new UnityEngine.Vector3(13f, 1.2f, 13f), UnityEngine.Quaternion.identity);
+        enemies.Add((testEnemy.GetComponent<Character>(), testEnemy.GetComponent<EnemyAI>(), testEnemy.GetComponent<Skills>()));
 
-        foreach (var addedEnemy in enemies) { addedEnemy.Item1.setGameManager(this); }
+        foreach (var enemy in enemies) { enemy.Item1.setGameManager(this); }
         Invoke("ReadyToMove", 1f);
         StartCoroutine(WaitForActionSelection());
         StartCoroutine(WaitForHealthbar());
@@ -421,13 +410,6 @@ public class GameManager : MonoBehaviour
                         enemies.RemoveAt(enemyTurnIndex);
                         enemyTurnMoveInitiated = false;
                         enemyHasAttacked = false;
-                        Debug.Log("Enem�kus po�tus maximus: " + enemies.Count);
-                        if (enemies.Count <= 0)
-                        {
-                            //Zat�m toto nev�m jestli m� smysl sem kvol totomu tahat celej script
-                            //Zas mo�n� dyl�j pro Sim�na heheheheh
-                            SceneManager.LoadScene("Victory");
-                        }
                         break;
                     }
                     if (!enemy.Item1.moving && !enemyTurnMoveInitiated) {
@@ -481,10 +463,6 @@ public class GameManager : MonoBehaviour
                             }
                             Invoke("ProcessNextEnemyTurn", endWaitTime);            
                         }
-                    }
-                    if(player.GetComponent<Skills>().health <= 0)
-                    {
-                        SceneManager.LoadScene("Lost"); // D�t kdy�tak delay pro hit a dead animaci. (�esk� koment�k pro Sim�na ����������)
                     }
                 } 
                 else 
