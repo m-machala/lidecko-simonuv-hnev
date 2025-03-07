@@ -6,6 +6,7 @@ using System.Numerics;
 using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.SceneManagement; //Screeeeeenus Maxima :)
 using UnityEngine.Scripting;
 using static Skills;
 
@@ -282,7 +283,7 @@ public class GameManager : MonoBehaviour
                 manabar.SetMana(player.GetComponent<Skills>().mana);
                 spearCounter.SetSpears(player.GetComponent<Skills>().arrowCount);
                 actionSelection.DisableIcons();
-                skipButton.DisableSkip();   
+                skipButton.DisableSkip();
                 Invoke("ActionComplete", endWaitTime);               
             }
         }
@@ -369,11 +370,11 @@ public class GameManager : MonoBehaviour
         
         var enemy = Instantiate(meleeEnemyPrefab, new UnityEngine.Vector3(1f, 1.2f, 1f), UnityEngine.Quaternion.identity);
         enemies.Add((enemy.GetComponent<Character>(), enemy.GetComponent<EnemyAI>(), enemy.GetComponent<Skills>(), enemy.GetComponent<EnemyHealthOrb>()));
-        enemy = Instantiate(meleeEnemyPrefab, new UnityEngine.Vector3(13f, 1.2f, 1f), UnityEngine.Quaternion.identity);
+        /*enemy = Instantiate(meleeEnemyPrefab, new UnityEngine.Vector3(13f, 1.2f, 1f), UnityEngine.Quaternion.identity);
         enemies.Add((enemy.GetComponent<Character>(), enemy.GetComponent<EnemyAI>(), enemy.GetComponent<Skills>(), enemy.GetComponent<EnemyHealthOrb>()));
         enemy = Instantiate(tankEnemyPrefab, new UnityEngine.Vector3(1f, 1.2f, 5f), UnityEngine.Quaternion.identity);
-        enemies.Add((enemy.GetComponent<Character>(), enemy.GetComponent<EnemyAI>(), enemy.GetComponent<Skills>(), enemy.GetComponent<EnemyHealthOrb>()));
-        enemy = Instantiate(tankEnemyPrefab, new UnityEngine.Vector3(13f, 1.2f, 5f), UnityEngine.Quaternion.identity);
+        enemies.Add((enemy.GetComponent<Character>(), enemy.GetComponent<EnemyAI>(), enemy.GetComponent<Skills>(), enemy.GetComponent<EnemyHealthOrb>()));*/
+        /*enemy = Instantiate(tankEnemyPrefab, new UnityEngine.Vector3(13f, 1.2f, 5f), UnityEngine.Quaternion.identity);
         enemies.Add((enemy.GetComponent<Character>(), enemy.GetComponent<EnemyAI>(), enemy.GetComponent<Skills>(), enemy.GetComponent<EnemyHealthOrb>()));
         enemy = Instantiate(archerEnemyPrefab, new UnityEngine.Vector3(1f, 1.2f, 9f), UnityEngine.Quaternion.identity);
         enemies.Add((enemy.GetComponent<Character>(), enemy.GetComponent<EnemyAI>(), enemy.GetComponent<Skills>(), enemy.GetComponent<EnemyHealthOrb>()));
@@ -382,7 +383,7 @@ public class GameManager : MonoBehaviour
         enemy = Instantiate(mageEnemyPrefab, new UnityEngine.Vector3(1f, 1.2f, 13f), UnityEngine.Quaternion.identity);
         enemies.Add((enemy.GetComponent<Character>(), enemy.GetComponent<EnemyAI>(), enemy.GetComponent<Skills>(), enemy.GetComponent<EnemyHealthOrb>()));
         enemy = Instantiate(mageEnemyPrefab, new UnityEngine.Vector3(13f, 1.2f, 13f), UnityEngine.Quaternion.identity);
-        enemies.Add((enemy.GetComponent<Character>(), enemy.GetComponent<EnemyAI>(), enemy.GetComponent<Skills>(), enemy.GetComponent<EnemyHealthOrb>()));
+        enemies.Add((enemy.GetComponent<Character>(), enemy.GetComponent<EnemyAI>(), enemy.GetComponent<Skills>(), enemy.GetComponent<EnemyHealthOrb>()));*/
 
         foreach (var addedEnemy in enemies) { addedEnemy.Item1.setGameManager(this); }
         Invoke("ReadyToMove", 1f);
@@ -412,6 +413,13 @@ public class GameManager : MonoBehaviour
                         enemies.RemoveAt(enemyTurnIndex);
                         enemyTurnMoveInitiated = false;
                         enemyHasAttacked = false;
+                        Debug.Log("Enemákus poètus maximus: " + enemies.Count);
+                        if (enemies.Count <= 0)
+                        {
+                            //Zatím toto nevím jestli má smysl sem kvol totomu tahat celej script
+                            //Zas možná dyláj pro Simóna heheheheh
+                            SceneManager.LoadScene("Victory");
+                        }
                         break;
                     }
                     if (!enemy.Item1.moving && !enemyTurnMoveInitiated) {
@@ -458,6 +466,10 @@ public class GameManager : MonoBehaviour
                             }
                             Invoke("ProcessNextEnemyTurn", endWaitTime);            
                         }
+                    }
+                    if(player.GetComponent<Skills>().health <= 0)
+                    {
+                        SceneManager.LoadScene("Lost"); // Dát kdyžtak delay pro hit a dead animaci. (Èeský komentík pro Simóna ìšèøžýáíéúù)
                     }
                 } 
                 else 
