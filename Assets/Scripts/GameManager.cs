@@ -49,6 +49,7 @@ public class GameManager : MonoBehaviour
     public void FinishedMoving() {
         if (gameState == GameState.PlayerMoving) {
             groundManager.UntintAllTiles();
+            player.GetComponent<Skills>().attackMode = AttackMode.Melee;
             FightRange();
             gameState = GameState.PlayerAction;
             actionSelection.EnableIcons();
