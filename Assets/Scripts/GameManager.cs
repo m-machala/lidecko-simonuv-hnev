@@ -35,7 +35,7 @@ public class GameManager : MonoBehaviour
     public Healthbar healthbar;
     public Manabar manabar;
     public Character player;
-    public List<(Character, EnemyAI, Skills)> enemies = new List<(Character, EnemyAI, Skills)>();
+    public List<(Character, EnemyAI, Skills, EnemyHealthOrb)> enemies = new List<(Character, EnemyAI, Skills, EnemyHealthOrb)>();
     Animator animator;
 
     [Range(0, 100)] public int walkDistance = 5;
@@ -188,6 +188,7 @@ public class GameManager : MonoBehaviour
                                     enemy.Item1.transform.rotation = UnityEngine.Quaternion.LookRotation(directionToPlayer);
                                 }                                                     
                                 playerSkills.meleeAttack(enemy.Item3);
+                                enemy.Item4.UpdateColor();
                                 float playerAttackAnimationLength = player.animator.GetCurrentAnimatorStateInfo(0).length;
                                 float enemyGetHitAnimationLength = enemy.Item1.animator.GetCurrentAnimatorStateInfo(0).length;
                                 float offset = 0.4f;                                
@@ -201,6 +202,7 @@ public class GameManager : MonoBehaviour
                         foreach (var enemy in enemies) {
                             if (enemy.Item1.GetPosition() == position) {
                                 playerSkills.arrowAttack(enemy.Item3);
+                                enemy.Item4.UpdateColor();
                                 endWaitTime = UnityEngine.Vector2.Distance(player.GetPosition(), enemy.Item1.GetPosition()) * 0.5f;
                             }
                         }
@@ -226,6 +228,11 @@ public class GameManager : MonoBehaviour
 
                         if (mainTarget != null) {
                             playerSkills.fireballAttack(mainTarget, surroundingTargets);
+                            mainTarget.GetComponent<EnemyHealthOrb>().UpdateColor();
+
+                            foreach (var enemy in surroundingTargets) {
+                                enemy.GetComponent<EnemyHealthOrb>().UpdateColor();
+                            }
                         }
                         break;
 
@@ -258,6 +265,9 @@ public class GameManager : MonoBehaviour
                         }
 
                         playerSkills.boltAttack(targets);
+                        foreach (var enemy in targets) {
+                            enemy.GetComponent<EnemyHealthOrb>().UpdateColor();
+                        }
                         break;
                         
                     default:
@@ -357,24 +367,24 @@ public class GameManager : MonoBehaviour
         groundManager.SpawnTiles(15, 15, groundPrefabs, obstaclePrefabs, obstaclePositions);
         player.gameObject.AddComponent<Skills>();        
         
-        var testEnemy = Instantiate(meleeEnemyPrefab, new UnityEngine.Vector3(1f, 1.2f, 1f), UnityEngine.Quaternion.identity);
-        enemies.Add((testEnemy.GetComponent<Character>(), testEnemy.GetComponent<EnemyAI>(), testEnemy.GetComponent<Skills>()));
-        testEnemy = Instantiate(meleeEnemyPrefab, new UnityEngine.Vector3(13f, 1.2f, 1f), UnityEngine.Quaternion.identity);
-        enemies.Add((testEnemy.GetComponent<Character>(), testEnemy.GetComponent<EnemyAI>(), testEnemy.GetComponent<Skills>()));
-        testEnemy = Instantiate(tankEnemyPrefab, new UnityEngine.Vector3(1f, 1.2f, 5f), UnityEngine.Quaternion.identity);
-        enemies.Add((testEnemy.GetComponent<Character>(), testEnemy.GetComponent<EnemyAI>(), testEnemy.GetComponent<Skills>()));
-        testEnemy = Instantiate(tankEnemyPrefab, new UnityEngine.Vector3(13f, 1.2f, 5f), UnityEngine.Quaternion.identity);
-        enemies.Add((testEnemy.GetComponent<Character>(), testEnemy.GetComponent<EnemyAI>(), testEnemy.GetComponent<Skills>()));
-        testEnemy = Instantiate(archerEnemyPrefab, new UnityEngine.Vector3(1f, 1.2f, 9f), UnityEngine.Quaternion.identity);
-        enemies.Add((testEnemy.GetComponent<Character>(), testEnemy.GetComponent<EnemyAI>(), testEnemy.GetComponent<Skills>()));
-        testEnemy = Instantiate(archerEnemyPrefab, new UnityEngine.Vector3(13f, 1.2f, 9f), UnityEngine.Quaternion.identity);
-        enemies.Add((testEnemy.GetComponent<Character>(), testEnemy.GetComponent<EnemyAI>(), testEnemy.GetComponent<Skills>()));
-        testEnemy = Instantiate(mageEnemyPrefab, new UnityEngine.Vector3(1f, 1.2f, 13f), UnityEngine.Quaternion.identity);
-        enemies.Add((testEnemy.GetComponent<Character>(), testEnemy.GetComponent<EnemyAI>(), testEnemy.GetComponent<Skills>()));
-        testEnemy = Instantiate(mageEnemyPrefab, new UnityEngine.Vector3(13f, 1.2f, 13f), UnityEngine.Quaternion.identity);
-        enemies.Add((testEnemy.GetComponent<Character>(), testEnemy.GetComponent<EnemyAI>(), testEnemy.GetComponent<Skills>()));
+        var enemy = Instantiate(meleeEnemyPrefab, new UnityEngine.Vector3(1f, 1.2f, 1f), UnityEngine.Quaternion.identity);
+        enemies.Add((enemy.GetComponent<Character>(), enemy.GetComponent<EnemyAI>(), enemy.GetComponent<Skills>(), enemy.GetComponent<EnemyHealthOrb>()));
+        enemy = Instantiate(meleeEnemyPrefab, new UnityEngine.Vector3(13f, 1.2f, 1f), UnityEngine.Quaternion.identity);
+        enemies.Add((enemy.GetComponent<Character>(), enemy.GetComponent<EnemyAI>(), enemy.GetComponent<Skills>(), enemy.GetComponent<EnemyHealthOrb>()));
+        enemy = Instantiate(tankEnemyPrefab, new UnityEngine.Vector3(1f, 1.2f, 5f), UnityEngine.Quaternion.identity);
+        enemies.Add((enemy.GetComponent<Character>(), enemy.GetComponent<EnemyAI>(), enemy.GetComponent<Skills>(), enemy.GetComponent<EnemyHealthOrb>()));
+        enemy = Instantiate(tankEnemyPrefab, new UnityEngine.Vector3(13f, 1.2f, 5f), UnityEngine.Quaternion.identity);
+        enemies.Add((enemy.GetComponent<Character>(), enemy.GetComponent<EnemyAI>(), enemy.GetComponent<Skills>(), enemy.GetComponent<EnemyHealthOrb>()));
+        enemy = Instantiate(archerEnemyPrefab, new UnityEngine.Vector3(1f, 1.2f, 9f), UnityEngine.Quaternion.identity);
+        enemies.Add((enemy.GetComponent<Character>(), enemy.GetComponent<EnemyAI>(), enemy.GetComponent<Skills>(), enemy.GetComponent<EnemyHealthOrb>()));
+        enemy = Instantiate(archerEnemyPrefab, new UnityEngine.Vector3(13f, 1.2f, 9f), UnityEngine.Quaternion.identity);
+        enemies.Add((enemy.GetComponent<Character>(), enemy.GetComponent<EnemyAI>(), enemy.GetComponent<Skills>(), enemy.GetComponent<EnemyHealthOrb>()));
+        enemy = Instantiate(mageEnemyPrefab, new UnityEngine.Vector3(1f, 1.2f, 13f), UnityEngine.Quaternion.identity);
+        enemies.Add((enemy.GetComponent<Character>(), enemy.GetComponent<EnemyAI>(), enemy.GetComponent<Skills>(), enemy.GetComponent<EnemyHealthOrb>()));
+        enemy = Instantiate(mageEnemyPrefab, new UnityEngine.Vector3(13f, 1.2f, 13f), UnityEngine.Quaternion.identity);
+        enemies.Add((enemy.GetComponent<Character>(), enemy.GetComponent<EnemyAI>(), enemy.GetComponent<Skills>(), enemy.GetComponent<EnemyHealthOrb>()));
 
-        foreach (var enemy in enemies) { enemy.Item1.setGameManager(this); }
+        foreach (var addedEnemy in enemies) { addedEnemy.Item1.setGameManager(this); }
         Invoke("ReadyToMove", 1f);
         StartCoroutine(WaitForActionSelection());
         StartCoroutine(WaitForHealthbar());
