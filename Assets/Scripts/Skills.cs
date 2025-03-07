@@ -69,6 +69,10 @@ public class Skills : MonoBehaviour
                 target.health -= arrowDamage;
             }
             arrowCount--;
+
+            GameObject prefab = Resources.Load<GameObject>("TestSphere");  
+            var testSphere = Instantiate(prefab, transform.position + new Vector3(0, 1, 0), Quaternion.identity);
+            testSphere.GetComponent<Projectile>().StartMovement(transform.position, target.GetComponent<Transform>().position, 1);
         }
     }
 
