@@ -32,7 +32,7 @@ public class SkipButton : MonoBehaviour
 
         skip.color = Color.grey;
         skip.raycastTarget = false;
-        Debug.Log("Disáábluju");
+        Debug.Log("Disï¿½ï¿½bluju");
     }
 
 
@@ -61,5 +61,7 @@ public class SkipButton : MonoBehaviour
             gameManager.actionSelection.DisableIcons();
             DisableSkip();
         }
+
+        gameManager.GetComponent<AudioSource>().Play();
     }
 }
