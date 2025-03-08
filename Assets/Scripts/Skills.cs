@@ -5,57 +5,30 @@ using UnityEngine;
 
 public class Skills : MonoBehaviour
 {
-    public int meleeDamage;
+    public int meleeDamage = 7;
 
-    public int maxMana;
-    public int mana;
-    public int manaRegen;
+    public int maxMana = 10;
+    public int mana = 10;
+    public int manaRegen = 1;
 
 
-    public int maxHealth;
-    public int health;
-    public int healCost;
-    public int healStrength;
+    public int maxHealth = 20;
+    public int health = 20;
+    public int healCost = 3;
+    public int healStrength = 8;
 
-    public int arrowCount;
-    public float arrowHitChance;
-    public int arrowDamage;
+    public int arrowCount = 10;
+    public float arrowHitChance = 0.95f;
+    public int arrowDamage = 5;
 
-    public int fireballMainDamage;
-    public int fireballSurroundingDamage;
-    public int fireballCost;
+    public int fireballMainDamage = 10;
+    public int fireballSurroundingDamage = 5;
+    public int fireballCost = 5;
 
-    public int boltDamage;
-    public int boltCost;
+    public int boltDamage = 3;
+    public int boltCost = 4;
 
-    public AttackMode attackMode;
-
-    public void Initialize(
-        int meleeDamage = 7, int maxMana = 10, int mana = 10, int manaRegen = 1,
-        int maxHealth = 20, int health = 20, int healCost = 2, int healStrength = 5,
-        int arrowCount = 10, float arrowHitChance = 0.95f, int arrowDamage = 5,
-        int fireballMainDamage = 10, int fireballSurroundingDamage = 5, int fireballCost = 5,
-        int boltDamage = 3, int boltCost = 4, AttackMode attackMode = AttackMode.Melee
-    )
-    {
-        this.meleeDamage = meleeDamage;
-        this.maxMana = maxMana;
-        this.mana = mana;
-        this.manaRegen = manaRegen;
-        this.maxHealth = maxHealth;
-        this.health = health;
-        this.healCost = healCost;
-        this.healStrength = healStrength;
-        this.arrowCount = arrowCount;
-        this.arrowHitChance = arrowHitChance;
-        this.arrowDamage = arrowDamage;
-        this.fireballMainDamage = fireballMainDamage;
-        this.fireballSurroundingDamage = fireballSurroundingDamage;
-        this.fireballCost = fireballCost;
-        this.boltDamage = boltDamage;
-        this.boltCost = boltCost;
-        this.attackMode = attackMode;
-    }
+    public AttackMode attackMode = AttackMode.Melee;
 
     private AudioSource audioSource;
     private AudioClip melee;
