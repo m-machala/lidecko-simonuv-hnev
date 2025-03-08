@@ -89,17 +89,13 @@ public class Skills : MonoBehaviour
         target.health -= meleeDamage;       
     }
 
-    public void arrowAttack(Skills target) {
+    public void rangedAttack(Skills target) {
         if (arrowCount > 0) {
             audioSource.PlayOneShot(spear);
             if (UnityEngine.Random.Range(0f, 1f) <= arrowHitChance) {
                 target.health -= arrowDamage;
             }
             arrowCount--;
-
-            GameObject prefab = Resources.Load<GameObject>("TestSphere");  
-            var testSphere = Instantiate(prefab, transform.position + new Vector3(0, 1, 0), Quaternion.identity);
-            testSphere.GetComponent<Projectile>().StartMovement(transform.position, target.GetComponent<Transform>().position, 1);
         }
     }
 
