@@ -121,7 +121,7 @@ public class GameManager : MonoBehaviour
             enemyAnimator.SetTrigger("death"); 
         } else {
             enemyAnimator.SetTrigger("getHit");  
-        }                    
+        }
     }
 
     public void TileClicked(UnityEngine.Vector2 position) {
@@ -169,13 +169,12 @@ public class GameManager : MonoBehaviour
             }
 
             if (reachableTiles.Contains(position))
-            {
-                waiting = true;
+            {   
                 animator = GetComponentInChildren<Animator>(); 
                 groundManager.UntintAllTiles();
                 float endWaitTime = 0f;
                 float offset = 0f;
-                
+
                 switch (attackMode) {
                     case AttackMode.Melee:
                         foreach (var enemy in enemies)
@@ -403,7 +402,7 @@ public class GameManager : MonoBehaviour
                 spearCounter.SetSpears(player.GetComponent<Skills>().arrowCount);
                 actionSelection.DisableIcons();
                 skipButton.DisableSkip();
-                Invoke("ActionComplete", endWaitTime);               
+                Invoke("ActionComplete", endWaitTime);
             }
         }
         Debug.Log(gameState);
@@ -500,19 +499,19 @@ public class GameManager : MonoBehaviour
 
         enemies.Add((enemy.GetComponent<Character>(), enemy.GetComponent<EnemyAI>(), skillsMele, enemy.GetComponent<EnemyHealthOrb>()));
         enemy = Instantiate(meleeEnemyPrefab, new UnityEngine.Vector3(13f, 1.2f, 1f), UnityEngine.Quaternion.identity);
-        enemies.Add((enemy.GetComponent<Character>(), enemy.GetComponent<EnemyAI>(), skillsMele, enemy.GetComponent<EnemyHealthOrb>()));
+        enemies.Add((enemy.GetComponent<Character>(), enemy.GetComponent<EnemyAI>(), enemy.GetComponent<Skills>(), enemy.GetComponent<EnemyHealthOrb>()));
         enemy = Instantiate(tankEnemyPrefab, new UnityEngine.Vector3(1f, 1.2f, 5f), UnityEngine.Quaternion.identity);
-        enemies.Add((enemy.GetComponent<Character>(), enemy.GetComponent<EnemyAI>(), skillsTank, enemy.GetComponent<EnemyHealthOrb>()));
+        enemies.Add((enemy.GetComponent<Character>(), enemy.GetComponent<EnemyAI>(), enemy.GetComponent<Skills>(), enemy.GetComponent<EnemyHealthOrb>()));
         enemy = Instantiate(tankEnemyPrefab, new UnityEngine.Vector3(13f, 1.2f, 5f), UnityEngine.Quaternion.identity);
-        enemies.Add((enemy.GetComponent<Character>(), enemy.GetComponent<EnemyAI>(), skillsTank, enemy.GetComponent<EnemyHealthOrb>()));
+        enemies.Add((enemy.GetComponent<Character>(), enemy.GetComponent<EnemyAI>(), enemy.GetComponent<Skills>(), enemy.GetComponent<EnemyHealthOrb>()));
         enemy = Instantiate(archerEnemyPrefab, new UnityEngine.Vector3(1f, 1.2f, 9f), UnityEngine.Quaternion.identity);
-        enemies.Add((enemy.GetComponent<Character>(), enemy.GetComponent<EnemyAI>(), skillsRanged, enemy.GetComponent<EnemyHealthOrb>()));
+        enemies.Add((enemy.GetComponent<Character>(), enemy.GetComponent<EnemyAI>(), enemy.GetComponent<Skills>(), enemy.GetComponent<EnemyHealthOrb>()));
         enemy = Instantiate(archerEnemyPrefab, new UnityEngine.Vector3(13f, 1.2f, 9f), UnityEngine.Quaternion.identity);
-        enemies.Add((enemy.GetComponent<Character>(), enemy.GetComponent<EnemyAI>(), skillsRanged, enemy.GetComponent<EnemyHealthOrb>()));
+        enemies.Add((enemy.GetComponent<Character>(), enemy.GetComponent<EnemyAI>(), enemy.GetComponent<Skills>(), enemy.GetComponent<EnemyHealthOrb>()));
         enemy = Instantiate(mageEnemyPrefab, new UnityEngine.Vector3(1f, 1.2f, 13f), UnityEngine.Quaternion.identity);
-        enemies.Add((enemy.GetComponent<Character>(), enemy.GetComponent<EnemyAI>(), skillsMage, enemy.GetComponent<EnemyHealthOrb>()));
+        enemies.Add((enemy.GetComponent<Character>(), enemy.GetComponent<EnemyAI>(), enemy.GetComponent<Skills>(), enemy.GetComponent<EnemyHealthOrb>()));
         enemy = Instantiate(mageEnemyPrefab, new UnityEngine.Vector3(13f, 1.2f, 13f), UnityEngine.Quaternion.identity);
-        enemies.Add((enemy.GetComponent<Character>(), enemy.GetComponent<EnemyAI>(), skillsMage, enemy.GetComponent<EnemyHealthOrb>()));
+        enemies.Add((enemy.GetComponent<Character>(), enemy.GetComponent<EnemyAI>(), enemy.GetComponent<Skills>(), enemy.GetComponent<EnemyHealthOrb>()));
 
         foreach (var addedEnemy in enemies) { addedEnemy.Item1.setGameManager(this); }
         Invoke("ReadyToMove", 1f);
@@ -532,7 +531,6 @@ public class GameManager : MonoBehaviour
 
         switch (gameState) {
             case GameState.EnemyMoving:
-                waiting = false;
                 if (enemyTurnIndex < enemies.Count)
                 {
                     var enemy = enemies[enemyTurnIndex];
