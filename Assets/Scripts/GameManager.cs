@@ -76,6 +76,7 @@ public class GameManager : MonoBehaviour
         enemyHasAttacked = false;
         gameState = GameState.EnemyMoving;
         Debug.Log("Enemies turn started sequentially");
+        Debug.Log("random");
         waiting = false;
     }
 
@@ -167,7 +168,7 @@ public class GameManager : MonoBehaviour
                     reachableTiles = new List<UnityEngine.Vector2> { player.GetPosition() };
                     break;
             }
-
+  
             if (reachableTiles.Contains(position))
             {
                 waiting = true;
@@ -299,7 +300,7 @@ public class GameManager : MonoBehaviour
                             } else if (currentPrefab == "Archer Enemy(Clone)") {
                                 offset = 0.75f;
                             }
-
+                            
                             if (enemy.Item1.GetPosition() == position) {
                                 endWaitTime = UnityEngine.Vector2.Distance(player.GetPosition(), enemy.Item1.GetPosition()) * 0.5f;
                                 mainTarget = enemy.Item3;
