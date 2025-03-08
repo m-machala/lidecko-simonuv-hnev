@@ -8,20 +8,25 @@ public class ScreenManagerScript : MonoBehaviour
 {
     public GameObject LoadingScreen;
     public Image LoadingBarFill;
+    public AudioClip click;
+    public AudioSource audioSource;
 
     public void LoadScene(string sceneName)
     {
         //SceneManager.LoadScene(sceneName);
+        audioSource.PlayOneShot(click);
         StartCoroutine(LoadSceneAsync(sceneName));
     }
 
     public void SimpleLoadScene(string sceneName)
     {
+        audioSource.PlayOneShot(click);
         SceneManager.LoadScene(sceneName);
     }
 
     public void QuitGame()
     {
+        audioSource.PlayOneShot(click);
         Application.Quit();
     }
 

@@ -437,6 +437,7 @@ public class GameManager : MonoBehaviour
         
         groundManager.SpawnTiles(15, 15, groundPrefabs, obstaclePrefabs, obstaclePositions);
         player.gameObject.AddComponent<Skills>();
+        player.GetComponent<Skills>().Initialize();
 
         var enemy = Instantiate(meleeEnemyPrefab, new UnityEngine.Vector3(1f, 1.2f, 1f), UnityEngine.Quaternion.identity);
         Skills skillsMele = enemy.GetComponent<Skills>();
