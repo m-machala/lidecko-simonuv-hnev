@@ -121,7 +121,7 @@ public class GameManager : MonoBehaviour
             enemyAnimator.SetTrigger("death"); 
         } else {
             enemyAnimator.SetTrigger("getHit");  
-        }                    
+        }
     }
 
     public void TileClicked(UnityEngine.Vector2 position) {
@@ -174,7 +174,7 @@ public class GameManager : MonoBehaviour
                 groundManager.UntintAllTiles();
                 float endWaitTime = 0f;
                 float offset = 0f;
-                
+
                 switch (attackMode) {
                     case AttackMode.Melee:
                         foreach (var enemy in enemies)
@@ -354,7 +354,7 @@ public class GameManager : MonoBehaviour
                 spearCounter.SetSpears(player.GetComponent<Skills>().arrowCount);
                 actionSelection.DisableIcons();
                 skipButton.DisableSkip();
-                Invoke("ActionComplete", endWaitTime);               
+                Invoke("ActionComplete", endWaitTime);
             }
         }
         Debug.Log(gameState);

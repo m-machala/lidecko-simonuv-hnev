@@ -80,7 +80,8 @@ public class ActionSelection : MonoBehaviour
             if (((gameManager.player.GetComponent<Skills>().arrowCount <= 0) && (img.name == "Ranged")) ||
                 ((gameManager.player.GetComponent<Skills>().mana < gameManager.player.GetComponent<Skills>().fireballCost) && (img.name == "Fireball")) ||
                 ((gameManager.player.GetComponent<Skills>().mana < gameManager.player.GetComponent<Skills>().boltCost) && (img.name == "Bolt")) ||
-                ((gameManager.player.GetComponent<Skills>().mana < gameManager.player.GetComponent<Skills>().healCost) && (img.name == "Heal")))
+                ((gameManager.player.GetComponent<Skills>().mana < gameManager.player.GetComponent<Skills>().healCost) && (img.name == "Heal")) || 
+                ((gameManager.player.GetComponent<Skills>().health >= gameManager.player.GetComponent<Skills>().maxHealth) && (img.name == "Heal")))
             {
                 continue;
             }

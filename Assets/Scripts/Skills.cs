@@ -129,9 +129,10 @@ public class Skills : MonoBehaviour
     public void heal() {
         if (mana >= healCost) {
             audioSource.PlayOneShot(healing);
-            health += Math.Min(health + healStrength, maxHealth);
+            health = Math.Min(health + healStrength, maxHealth);
             mana -= healCost;
         }
+        Debug.Log("Livus maximaaaaaaaaaaaa: " + health);
     }
 
     public enum AttackMode
