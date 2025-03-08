@@ -140,11 +140,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cc27b3f6a2745284c9ca0555708a115c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  meleeDamage: 7
+  meleeDamage: 5
   maxMana: 10
   mana: 10
   manaRegen: 1
-  MaxHealth: 20
+  maxHealth: 20
   health: 20
   healCost: 2
   healStrength: 5

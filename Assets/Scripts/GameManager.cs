@@ -487,33 +487,32 @@ public class GameManager : MonoBehaviour
         
         groundManager.SpawnTiles(15, 15, groundPrefabs, obstaclePrefabs, obstaclePositions);
         player.gameObject.AddComponent<Skills>();
-        player.GetComponent<Skills>().Initialize();
 
         var enemy = Instantiate(meleeEnemyPrefab, new UnityEngine.Vector3(1f, 1.2f, 1f), UnityEngine.Quaternion.identity);
-        Skills skillsMele = enemy.GetComponent<Skills>();
+        /*Skills skillsMele = enemy.GetComponent<Skills>();
         Skills skillsTank = enemy.GetComponent<Skills>();
         Skills skillsRanged = enemy.GetComponent<Skills>();
         Skills skillsMage = enemy.GetComponent<Skills>();
         skillsMele.Initialize(meleeDamage: 5, maxHealth: 20, health: 20);
         skillsTank.Initialize(meleeDamage: 3, maxHealth: 40, health: 40);
         skillsRanged.Initialize(meleeDamage: 2, maxHealth: 15, health: 15, arrowCount: 20, arrowDamage: 7, arrowHitChance: 0.9f);
-        skillsMage.Initialize(meleeDamage: 1, maxHealth: 10, health: 10, maxMana: 15, mana: 15, manaRegen: 3, fireballMainDamage: 10, fireballSurroundingDamage: 0, fireballCost: 10);
+        skillsMage.Initialize(meleeDamage: 1, maxHealth: 10, health: 10, maxMana: 15, mana: 15, manaRegen: 3, fireballMainDamage: 10, fireballSurroundingDamage: 0, fireballCost: 10);*/
 
-        enemies.Add((enemy.GetComponent<Character>(), enemy.GetComponent<EnemyAI>(), skillsMele, enemy.GetComponent<EnemyHealthOrb>()));
+        enemies.Add((enemy.GetComponent<Character>(), enemy.GetComponent<EnemyAI>(), enemy.GetComponent<Skills>(), enemy.GetComponent<EnemyHealthOrb>()));
         enemy = Instantiate(meleeEnemyPrefab, new UnityEngine.Vector3(13f, 1.2f, 1f), UnityEngine.Quaternion.identity);
-        enemies.Add((enemy.GetComponent<Character>(), enemy.GetComponent<EnemyAI>(), skillsMele, enemy.GetComponent<EnemyHealthOrb>()));
+        enemies.Add((enemy.GetComponent<Character>(), enemy.GetComponent<EnemyAI>(), enemy.GetComponent<Skills>(), enemy.GetComponent<EnemyHealthOrb>()));
         enemy = Instantiate(tankEnemyPrefab, new UnityEngine.Vector3(1f, 1.2f, 5f), UnityEngine.Quaternion.identity);
-        enemies.Add((enemy.GetComponent<Character>(), enemy.GetComponent<EnemyAI>(), skillsTank, enemy.GetComponent<EnemyHealthOrb>()));
+        enemies.Add((enemy.GetComponent<Character>(), enemy.GetComponent<EnemyAI>(), enemy.GetComponent<Skills>(), enemy.GetComponent<EnemyHealthOrb>()));
         enemy = Instantiate(tankEnemyPrefab, new UnityEngine.Vector3(13f, 1.2f, 5f), UnityEngine.Quaternion.identity);
-        enemies.Add((enemy.GetComponent<Character>(), enemy.GetComponent<EnemyAI>(), skillsTank, enemy.GetComponent<EnemyHealthOrb>()));
+        enemies.Add((enemy.GetComponent<Character>(), enemy.GetComponent<EnemyAI>(), enemy.GetComponent<Skills>(), enemy.GetComponent<EnemyHealthOrb>()));
         enemy = Instantiate(archerEnemyPrefab, new UnityEngine.Vector3(1f, 1.2f, 9f), UnityEngine.Quaternion.identity);
-        enemies.Add((enemy.GetComponent<Character>(), enemy.GetComponent<EnemyAI>(), skillsRanged, enemy.GetComponent<EnemyHealthOrb>()));
+        enemies.Add((enemy.GetComponent<Character>(), enemy.GetComponent<EnemyAI>(), enemy.GetComponent<Skills>(), enemy.GetComponent<EnemyHealthOrb>()));
         enemy = Instantiate(archerEnemyPrefab, new UnityEngine.Vector3(13f, 1.2f, 9f), UnityEngine.Quaternion.identity);
-        enemies.Add((enemy.GetComponent<Character>(), enemy.GetComponent<EnemyAI>(), skillsRanged, enemy.GetComponent<EnemyHealthOrb>()));
+        enemies.Add((enemy.GetComponent<Character>(), enemy.GetComponent<EnemyAI>(), enemy.GetComponent<Skills>(), enemy.GetComponent<EnemyHealthOrb>()));
         enemy = Instantiate(mageEnemyPrefab, new UnityEngine.Vector3(1f, 1.2f, 13f), UnityEngine.Quaternion.identity);
-        enemies.Add((enemy.GetComponent<Character>(), enemy.GetComponent<EnemyAI>(), skillsMage, enemy.GetComponent<EnemyHealthOrb>()));
+        enemies.Add((enemy.GetComponent<Character>(), enemy.GetComponent<EnemyAI>(), enemy.GetComponent<Skills>(), enemy.GetComponent<EnemyHealthOrb>()));
         enemy = Instantiate(mageEnemyPrefab, new UnityEngine.Vector3(13f, 1.2f, 13f), UnityEngine.Quaternion.identity);
-        enemies.Add((enemy.GetComponent<Character>(), enemy.GetComponent<EnemyAI>(), skillsMage, enemy.GetComponent<EnemyHealthOrb>()));
+        enemies.Add((enemy.GetComponent<Character>(), enemy.GetComponent<EnemyAI>(), enemy.GetComponent<Skills>(), enemy.GetComponent<EnemyHealthOrb>()));
 
         foreach (var addedEnemy in enemies) { addedEnemy.Item1.setGameManager(this); }
         Invoke("ReadyToMove", 1f);
@@ -547,7 +546,7 @@ public class GameManager : MonoBehaviour
                         Debug.Log("Enem�kus po�tus maximus: " + enemies.Count);
                         if (enemies.Count <= 0)
                         {                         
-                            SceneManager.LoadScene("Victory"); // delay for victory state
+                            //SceneManager.LoadScene("Victory"); // delay for victory state
                         }
                         break;
                     }

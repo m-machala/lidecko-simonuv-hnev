@@ -144,13 +144,13 @@ MonoBehaviour:
   maxMana: 10
   mana: 10
   manaRegen: 1
-  maxHealth: 20
-  health: 20
+  maxHealth: 15
+  health: 15
   healCost: 2
   healStrength: 5
-  arrowCount: 10
-  arrowHitChance: 0.95
-  arrowDamage: 5
+  arrowCount: 20
+  arrowHitChance: 0.9
+  arrowDamage: 7
   fireballMainDamage: 10
   fireballSurroundingDamage: 5
   fireballCost: 5

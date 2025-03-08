@@ -140,19 +140,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cc27b3f6a2745284c9ca0555708a115c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  meleeDamage: 7
+  meleeDamage: 2
   maxMana: 10
   mana: 10
   manaRegen: 1
-  MaxHealth: 20
-  health: 20
+  maxHealth: 10
+  health: 10
   healCost: 2
   healStrength: 5
   arrowCount: 10
   arrowHitChance: 0.95
   arrowDamage: 5
   fireballMainDamage: 10
-  fireballSurroundingDamage: 5
+  fireballSurroundingDamage: 0
   fireballCost: 5
   boltDamage: 3
   boltCost: 4
