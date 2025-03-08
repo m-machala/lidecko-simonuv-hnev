@@ -76,6 +76,7 @@ public class GameManager : MonoBehaviour
         enemyHasAttacked = false;
         gameState = GameState.EnemyMoving;
         Debug.Log("Enemies turn started sequentially");
+        Debug.Log("random");
         waiting = false;
     }
 
@@ -167,7 +168,7 @@ public class GameManager : MonoBehaviour
                     reachableTiles = new List<UnityEngine.Vector2> { player.GetPosition() };
                     break;
             }
-
+  
             if (reachableTiles.Contains(position))
             {
                 waiting = true;
@@ -258,12 +259,12 @@ public class GameManager : MonoBehaviour
                                 UnityEngine.Vector3 direction = (targetPosition - startPosition).normalized;                    
                                 UnityEngine.Quaternion rotation = UnityEngine.Quaternion.LookRotation(direction);
                     
-                                var testSphere = Instantiate(prefab, startPosition, rotation); 
+                                var spearObject = Instantiate(prefab, startPosition, rotation); 
 
                                 float distance = UnityEngine.Vector2.Distance(player.GetPosition(), position);
                                 endWaitTime = distance;                   
                                 
-                                testSphere.GetComponent<Projectile>().StartMovement(startPosition, targetPosition, endWaitTime/5);
+                                spearObject.GetComponent<Projectile>().StartMovement(startPosition, targetPosition, endWaitTime/5);
                     
                                 playerSkills.rangedAttack(enemy.Item3);
                                 enemy.Item4.UpdateColor();
@@ -285,25 +286,73 @@ public class GameManager : MonoBehaviour
                         var fireballTargetTiles = groundManager.GetSurroundingTiles(position, 3);
                         Skills mainTarget = null;
                         List<Skills> surroundingTargets = new List<Skills>();
+                        List<Character> surroundingCharacters = new List<Character>();
 
                         foreach (var enemy in enemies) {
+                            string currentPrefab = enemy.Item1.gameObject.name;          
+
+                            if (currentPrefab == "Melee Enemy(Clone)") {                              
+                                offset = 0.7f;                                    
+                            } else if (currentPrefab == "Tank Enemy(Clone)") { 
+                                offset = 0.7f;                      
+                            } else if (currentPrefab == "Mage Enemy(Clone)") {
+                                offset = 0.75f;
+                            } else if (currentPrefab == "Archer Enemy(Clone)") {
+                                offset = 0.75f;
+                            }
+                            
                             if (enemy.Item1.GetPosition() == position) {
                                 endWaitTime = UnityEngine.Vector2.Distance(player.GetPosition(), enemy.Item1.GetPosition()) * 0.5f;
                                 mainTarget = enemy.Item3;
+
+                                if (enemy.Item3.health <= 0) { 
+                                player.StartCoroutine(triggerAction("attackRanged", player.animator, enemy.Item1.animator, offset, true, endWaitTime)); 
+                                } else {
+                                    player.StartCoroutine(triggerAction("attackRanged", player.animator, enemy.Item1.animator, offset, false, endWaitTime)); 
+                                } 
+                                UnityEngine.Vector3 directionToEnemy = enemy.Item1.transform.position - player.transform.position;
+                                directionToEnemy.y = 0;
+                                if (directionToEnemy !=  UnityEngine.Vector3.zero)
+                                {
+                                    player.transform.rotation = UnityEngine.Quaternion.LookRotation(directionToEnemy);
+                                } 
+                                               
+                                UnityEngine.Vector3 directionToPlayer = player.transform.position - enemy.Item1.transform.position;
+                                directionToPlayer.y = 0;
+                                if (directionToPlayer !=  UnityEngine.Vector3.zero)
+                                {
+                                    enemy.Item1.transform.rotation = UnityEngine.Quaternion.LookRotation(directionToPlayer);
+                                }
+                                GameObject fireBallPrefab = Resources.Load<GameObject>("FireBall");  
+                                
+                                UnityEngine.Vector3 startPosition = player.transform.position;
+                                UnityEngine.Vector3 targetPosition = new UnityEngine.Vector3(position.x, 1.0f, position.y);                    
+                                UnityEngine.Vector3 direction = (targetPosition - startPosition).normalized;                    
+                                UnityEngine.Quaternion rotation = UnityEngine.Quaternion.LookRotation(direction);
+                    
+                                var fireball = Instantiate(fireBallPrefab, startPosition, rotation); 
+                                float distance = UnityEngine.Vector2.Distance(player.GetPosition(), position);
+                                endWaitTime = distance;                   
+                                
+                                fireball.GetComponent<Projectile>().StartMovement(startPosition, targetPosition, endWaitTime/5);
                             }
                             else {
                                 if (fireballTargetTiles.Contains(enemy.Item1.GetPosition())) {
                                     surroundingTargets.Add(enemy.Item3);
+                                    surroundingCharacters.Add(enemy.Item1);
                                 }
-                            }
+                            }                            
                         }
 
                         if (mainTarget != null) {
-                            playerSkills.fireballAttack(mainTarget, surroundingTargets);
+                            playerSkills.fireballAttack(mainTarget, surroundingTargets);                
                             mainTarget.GetComponent<EnemyHealthOrb>().UpdateColor();
 
-                            foreach (var enemy in surroundingTargets) {
+                            foreach (var enemy in surroundingTargets) {                                
                                 enemy.GetComponent<EnemyHealthOrb>().UpdateColor();
+                            }
+                            foreach (var enemyCharacter in surroundingCharacters) {                                
+                                enemyCharacter.animator.SetTrigger("getHit");
                             }
                         }
                         break;
@@ -549,11 +598,11 @@ public class GameManager : MonoBehaviour
                                     endWaitTime = distance;   
                                     iceBolt.GetComponent<Projectile>().StartMovement(startPosition, targetPosition, endWaitTime/5);
                                 } else if (attackType == "attackFireball") {
-                                    GameObject fireBallPrefab = Resources.Load<GameObject>("FireBall");                                                                                         
-                                    var fireBall = Instantiate(fireBallPrefab, startPosition, rotation);
+                                    GameObject iceBallPrefab = Resources.Load<GameObject>("IceBall");                                                                                         
+                                    var iceBall = Instantiate(iceBallPrefab, startPosition, rotation);
                                     float distance = UnityEngine.Vector2.Distance(player.GetPosition(), enemy.Item1.GetPosition());
                                     endWaitTime = distance;   
-                                    fireBall.GetComponent<Projectile>().StartMovement(startPosition, targetPosition, endWaitTime/5);
+                                    iceBall.GetComponent<Projectile>().StartMovement(startPosition, targetPosition, endWaitTime/5);
                                 }
 
                                 gameState = GameState.EnemyMoving;
