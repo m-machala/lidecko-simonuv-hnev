@@ -414,14 +414,14 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 625820608}
         m_TargetAssemblyTypeName: ScreenManagerScript, Assembly-CSharp
-        m_MethodName: QuitGame
-        m_Mode: 1
+        m_MethodName: SimpleLoadScene
+        m_Mode: 5
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
-          m_StringArgument: 
+          m_StringArgument: Menu
           m_BoolArgument: 0
         m_CallState: 2
 --- !u!114 &625820606
@@ -474,6 +474,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 780290fff0aeca94184972669aef8834, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  LoadingScreen: {fileID: 0}
+  LoadingBarFill: {fileID: 0}
 --- !u!1 &709154176
 GameObject:
   m_ObjectHideFlags: 0
@@ -531,7 +533,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Exit
+  m_text: MENU
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8ef53647dcb4a9a4c9c05084ec1755ed, type: 2}
   m_sharedMaterial: {fileID: -5485783569291433216, guid: 8ef53647dcb4a9a4c9c05084ec1755ed, type: 2}

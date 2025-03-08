@@ -15,6 +15,11 @@ public class ScreenManagerScript : MonoBehaviour
         StartCoroutine(LoadSceneAsync(sceneName));
     }
 
+    public void SimpleLoadScene(string sceneName)
+    {
+        SceneManager.LoadScene(sceneName);
+    }
+
     public void QuitGame()
     {
         Application.Quit();
