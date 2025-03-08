@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 2730157545046956665}
   - component: {fileID: 6680085906846905190}
   m_Layer: 0
-  m_Name: TestSphere
+  m_Name: Spear
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

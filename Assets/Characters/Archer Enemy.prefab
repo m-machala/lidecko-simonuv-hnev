@@ -144,7 +144,7 @@ MonoBehaviour:
   maxMana: 10
   mana: 10
   manaRegen: 1
-  MaxHealth: 20
+  maxHealth: 20
   health: 20
   healCost: 2
   healStrength: 5

@@ -250,7 +250,7 @@ public class GameManager : MonoBehaviour
                                     enemy.Item1.transform.rotation = UnityEngine.Quaternion.LookRotation(directionToPlayer);
                                 }
 
-                                GameObject prefab = Resources.Load<GameObject>("TestSphere");  
+                                GameObject prefab = Resources.Load<GameObject>("Spear");  
                                 
                                 UnityEngine.Vector3 startPosition = player.transform.position;
                                 UnityEngine.Vector3 targetPosition = new UnityEngine.Vector3(position.x, 1.0f, position.y);                    
@@ -477,7 +477,7 @@ public class GameManager : MonoBehaviour
     {
         float endWaitTime = 0f;
         float offset = 0f;
-        string attackType = "";
+        string attackType = "";        
         animator = GetComponentInChildren<Animator>();        
 
         switch (gameState) {
@@ -510,12 +510,17 @@ public class GameManager : MonoBehaviour
                             float attackRange = 0f;                           
                             float enemyAttackAnimationLength = enemy.Item1.animator.GetCurrentAnimatorStateInfo(0).length;
                             float playerGetHitAnimationLength = player.animator.GetCurrentAnimatorStateInfo(0).length;
-                            string currentPrefab = enemy.Item1.gameObject.name;          
+                            string currentPrefab = enemy.Item1.gameObject.name;   
+
+                            UnityEngine.Vector3 startPosition = enemy.Item1.transform.position;
+                            UnityEngine.Vector3 targetPosition = new UnityEngine.Vector3(player.GetPosition().x, 1.0f, player.GetPosition().y);                    
+                            UnityEngine.Vector3 direction = (targetPosition - startPosition).normalized;                    
+                            UnityEngine.Quaternion rotation = UnityEngine.Quaternion.LookRotation(direction) * UnityEngine.Quaternion.Euler(90, 0, 0);   
 
                             if (currentPrefab == "Melee Enemy(Clone)") {   
                                 attackType = "attackMelee";                             
                                 attackRange = 1.5f;
-                                offset = 0.75f;       
+                                offset = 0.75f;                                    
                             } else if (currentPrefab == "Tank Enemy(Clone)") {
                                 attackType = "attackMelee"; 
                                 attackRange = 1.5f;
@@ -523,16 +528,31 @@ public class GameManager : MonoBehaviour
                             } else if (currentPrefab == "Mage Enemy(Clone)") {
                                 attackType = "attackFireball"; 
                                 attackRange = 5f;
-                                offset = 0.85f;
+                                offset = 0.95f;                                
                             } else if (currentPrefab == "Archer Enemy(Clone)") {
                                 attackType = "attackRanged"; 
                                 attackRange = 3f;
-                                offset = 0.85f;
+                                offset = 0.7f;                            
                             }
 
                             if (attackRange >= realDistance) {
                                 Debug.Log("Enemy " + enemyTurnIndex + " attacking");                          
-                                enemy.Item2.attack();                                                         
+                                enemy.Item2.attack(); 
+
+                                if (attackType == "attackRanged") {
+                                    GameObject iceBoltPrefab = Resources.Load<GameObject>("IceBolt");                                                                                         
+                                    var iceBolt = Instantiate(iceBoltPrefab, startPosition, rotation);
+                                    float distance = UnityEngine.Vector2.Distance(player.GetPosition(), enemy.Item1.GetPosition());
+                                    endWaitTime = distance;   
+                                    iceBolt.GetComponent<Projectile>().StartMovement(startPosition, targetPosition, endWaitTime/5);
+                                } else if (attackType == "attackFireball") {
+                                    GameObject fireBallPrefab = Resources.Load<GameObject>("FireBall");                                                                                         
+                                    var fireBall = Instantiate(fireBallPrefab, startPosition, rotation);
+                                    float distance = UnityEngine.Vector2.Distance(player.GetPosition(), enemy.Item1.GetPosition());
+                                    endWaitTime = distance;   
+                                    fireBall.GetComponent<Projectile>().StartMovement(startPosition, targetPosition, endWaitTime/5);
+                                }
+
                                 gameState = GameState.EnemyMoving;
                                 enemy.Item3.turnEnder();                             
                                 Debug.Log("Current prefab: " + enemy.Item1.gameObject.name);              
