@@ -173,11 +173,24 @@ public class GameManager : MonoBehaviour
                 animator = GetComponentInChildren<Animator>(); 
                 groundManager.UntintAllTiles();
                 float endWaitTime = 0f;
+                float offset = 0f;
                 
                 switch (attackMode) {
                     case AttackMode.Melee:
                         foreach (var enemy in enemies)
                         {
+                            string currentPrefab = enemy.Item1.gameObject.name;          
+
+                            if (currentPrefab == "Melee Enemy(Clone)") {                              
+                                offset = 0.35f;       
+                            } else if (currentPrefab == "Tank Enemy(Clone)") { 
+                                offset = 0.35f;                      
+                            } else if (currentPrefab == "Mage Enemy(Clone)") {
+                                offset = 0.55f;
+                            } else if (currentPrefab == "Archer Enemy(Clone)") {
+                                offset = 0.65f;
+                            }
+
                             if (enemy.Item1.GetPosition() == position)
                             {                                
                                 UnityEngine.Vector3 directionToEnemy = enemy.Item1.transform.position - player.transform.position;
@@ -196,8 +209,8 @@ public class GameManager : MonoBehaviour
                                 playerSkills.meleeAttack(enemy.Item3);
                                 enemy.Item4.UpdateColor();
                                 float playerAttackAnimationLength = player.animator.GetCurrentAnimatorStateInfo(0).length;
-                                float enemyGetHitAnimationLength = enemy.Item1.animator.GetCurrentAnimatorStateInfo(0).length;
-                                float offset = 0.4f;                                
+                                float enemyGetHitAnimationLength = enemy.Item1.animator.GetCurrentAnimatorStateInfo(0).length;                                
+                                                               
                                 endWaitTime = Math.Max(playerAttackAnimationLength, enemyGetHitAnimationLength + offset);
                                 if (enemy.Item3.health <= 0) { 
                                     player.StartCoroutine(triggerAction("attackMelee", player.animator, enemy.Item1.animator, offset, true)); 
@@ -210,13 +223,61 @@ public class GameManager : MonoBehaviour
 
                     case AttackMode.Ranged:
                         foreach (var enemy in enemies) {
+                            string currentPrefab = enemy.Item1.gameObject.name;          
+
+                            if (currentPrefab == "Melee Enemy(Clone)") {                              
+                                offset = 0.7f;                                    
+                            } else if (currentPrefab == "Tank Enemy(Clone)") { 
+                                offset = 0.7f;                      
+                            } else if (currentPrefab == "Mage Enemy(Clone)") {
+                                offset = 0.75f;
+                            } else if (currentPrefab == "Archer Enemy(Clone)") {
+                                offset = 0.75f;
+                            }
+
                             if (enemy.Item1.GetPosition() == position) {
+                                UnityEngine.Vector3 directionToEnemy = enemy.Item1.transform.position - player.transform.position;
+                                directionToEnemy.y = 0;
+                                if (directionToEnemy !=  UnityEngine.Vector3.zero)
+                                {
+                                    player.transform.rotation = UnityEngine.Quaternion.LookRotation(directionToEnemy);
+                                } 
+                                               
+                                UnityEngine.Vector3 directionToPlayer = player.transform.position - enemy.Item1.transform.position;
+                                directionToPlayer.y = 0;
+                                if (directionToPlayer !=  UnityEngine.Vector3.zero)
+                                {
+                                    enemy.Item1.transform.rotation = UnityEngine.Quaternion.LookRotation(directionToPlayer);
+                                }
+
+                                GameObject prefab = Resources.Load<GameObject>("TestSphere");  
+                                
+                                UnityEngine.Vector3 startPosition = player.transform.position;
+                                UnityEngine.Vector3 targetPosition = new UnityEngine.Vector3(position.x, 1.0f, position.y);                    
+                                UnityEngine.Vector3 direction = (targetPosition - startPosition).normalized;                    
+                                UnityEngine.Quaternion rotation = UnityEngine.Quaternion.LookRotation(direction);
+                    
+                                var testSphere = Instantiate(prefab, startPosition, rotation); 
+
+                                float distance = UnityEngine.Vector2.Distance(player.GetPosition(), position);
+                                endWaitTime = distance;                   
+                                
+                                testSphere.GetComponent<Projectile>().StartMovement(startPosition, targetPosition, endWaitTime/5);
+                    
                                 playerSkills.rangedAttack(enemy.Item3);
                                 enemy.Item4.UpdateColor();
-                                endWaitTime = UnityEngine.Vector2.Distance(player.GetPosition(), enemy.Item1.GetPosition()) * 0.5f;
+                                float playerAttackAnimationLength = player.animator.GetCurrentAnimatorStateInfo(0).length;
+                                float enemyGetHitAnimationLength = enemy.Item1.animator.GetCurrentAnimatorStateInfo(0).length;                    
+
+                                if (enemy.Item3.health <= 0) { 
+                                    player.StartCoroutine(triggerAction("attackRanged", player.animator, enemy.Item1.animator, offset, true, endWaitTime)); 
+                                } else {
+                                    player.StartCoroutine(triggerAction("attackRanged", player.animator, enemy.Item1.animator, offset, false, endWaitTime)); 
+                                }  
                             }                            
                         }
                         break;
+
 
                     case AttackMode.Fireball:
                         if (playerSkills.mana < playerSkills.fireballCost) return;
@@ -379,11 +440,11 @@ public class GameManager : MonoBehaviour
         
         var enemy = Instantiate(meleeEnemyPrefab, new UnityEngine.Vector3(1f, 1.2f, 1f), UnityEngine.Quaternion.identity);
         enemies.Add((enemy.GetComponent<Character>(), enemy.GetComponent<EnemyAI>(), enemy.GetComponent<Skills>(), enemy.GetComponent<EnemyHealthOrb>()));
-        /*enemy = Instantiate(meleeEnemyPrefab, new UnityEngine.Vector3(13f, 1.2f, 1f), UnityEngine.Quaternion.identity);
+        enemy = Instantiate(meleeEnemyPrefab, new UnityEngine.Vector3(13f, 1.2f, 1f), UnityEngine.Quaternion.identity);
         enemies.Add((enemy.GetComponent<Character>(), enemy.GetComponent<EnemyAI>(), enemy.GetComponent<Skills>(), enemy.GetComponent<EnemyHealthOrb>()));
         enemy = Instantiate(tankEnemyPrefab, new UnityEngine.Vector3(1f, 1.2f, 5f), UnityEngine.Quaternion.identity);
-        enemies.Add((enemy.GetComponent<Character>(), enemy.GetComponent<EnemyAI>(), enemy.GetComponent<Skills>(), enemy.GetComponent<EnemyHealthOrb>()));*/
-        /*enemy = Instantiate(tankEnemyPrefab, new UnityEngine.Vector3(13f, 1.2f, 5f), UnityEngine.Quaternion.identity);
+        enemies.Add((enemy.GetComponent<Character>(), enemy.GetComponent<EnemyAI>(), enemy.GetComponent<Skills>(), enemy.GetComponent<EnemyHealthOrb>()));
+        enemy = Instantiate(tankEnemyPrefab, new UnityEngine.Vector3(13f, 1.2f, 5f), UnityEngine.Quaternion.identity);
         enemies.Add((enemy.GetComponent<Character>(), enemy.GetComponent<EnemyAI>(), enemy.GetComponent<Skills>(), enemy.GetComponent<EnemyHealthOrb>()));
         enemy = Instantiate(archerEnemyPrefab, new UnityEngine.Vector3(1f, 1.2f, 9f), UnityEngine.Quaternion.identity);
         enemies.Add((enemy.GetComponent<Character>(), enemy.GetComponent<EnemyAI>(), enemy.GetComponent<Skills>(), enemy.GetComponent<EnemyHealthOrb>()));
@@ -392,7 +453,7 @@ public class GameManager : MonoBehaviour
         enemy = Instantiate(mageEnemyPrefab, new UnityEngine.Vector3(1f, 1.2f, 13f), UnityEngine.Quaternion.identity);
         enemies.Add((enemy.GetComponent<Character>(), enemy.GetComponent<EnemyAI>(), enemy.GetComponent<Skills>(), enemy.GetComponent<EnemyHealthOrb>()));
         enemy = Instantiate(mageEnemyPrefab, new UnityEngine.Vector3(13f, 1.2f, 13f), UnityEngine.Quaternion.identity);
-        enemies.Add((enemy.GetComponent<Character>(), enemy.GetComponent<EnemyAI>(), enemy.GetComponent<Skills>(), enemy.GetComponent<EnemyHealthOrb>()));*/
+        enemies.Add((enemy.GetComponent<Character>(), enemy.GetComponent<EnemyAI>(), enemy.GetComponent<Skills>(), enemy.GetComponent<EnemyHealthOrb>()));
 
         foreach (var addedEnemy in enemies) { addedEnemy.Item1.setGameManager(this); }
         Invoke("ReadyToMove", 1f);
@@ -439,19 +500,19 @@ public class GameManager : MonoBehaviour
                     if (enemyTurnMoveInitiated && !enemy.Item1.moving) {
                         if (!enemyHasAttacked) {                             
                             float realDistance = UnityEngine.Vector2.Distance(enemy.Item1.GetPosition(), player.GetPosition());
-                            float attackRange = 0f;                            
-                            string currentPrefab = enemy.Item1.gameObject.name;
+                            float attackRange = 0f;                           
                             float enemyAttackAnimationLength = enemy.Item1.animator.GetCurrentAnimatorStateInfo(0).length;
-                            float playerGetHitAnimationLength = player.animator.GetCurrentAnimatorStateInfo(0).length;          
+                            float playerGetHitAnimationLength = player.animator.GetCurrentAnimatorStateInfo(0).length;
+                            string currentPrefab = enemy.Item1.gameObject.name;          
 
                             if (currentPrefab == "Melee Enemy(Clone)") {   
                                 attackType = "attackMelee";                             
                                 attackRange = 1.5f;
-                                offset = 0.85f;       
+                                offset = 0.75f;       
                             } else if (currentPrefab == "Tank Enemy(Clone)") {
                                 attackType = "attackMelee"; 
                                 attackRange = 1.5f;
-                                offset = 0.85f;                      
+                                offset = 0.95f;                      
                             } else if (currentPrefab == "Mage Enemy(Clone)") {
                                 attackType = "attackFireball"; 
                                 attackRange = 5f;
