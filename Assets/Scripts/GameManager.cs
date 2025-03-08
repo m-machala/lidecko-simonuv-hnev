@@ -494,10 +494,8 @@ public class GameManager : MonoBehaviour
                         enemyHasAttacked = false;
                         Debug.Log("Enem�kus po�tus maximus: " + enemies.Count);
                         if (enemies.Count <= 0)
-                        {
-                            //Zat�m toto nev�m jestli m� smysl sem kvol totomu tahat celej script
-                            //Zas mo�n� dyl�j pro Sim�na heheheheh
-                            SceneManager.LoadScene("Victory");
+                        {                         
+                            SceneManager.LoadScene("Victory"); // delay for victory state
                         }
                         break;
                     }
