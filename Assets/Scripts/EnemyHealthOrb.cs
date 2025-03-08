@@ -19,7 +19,7 @@ public class EnemyHealthOrb : MonoBehaviour
     {
         var skills = GetComponent<Skills>();
         Renderer renderer = healthOrb.GetComponent<Renderer>();
-        Color newColor = Color.Lerp(Color.red, Color.green, (float)skills.health / (float)skills.MaxHealth);
+        Color newColor = Color.Lerp(Color.red, Color.green, (float)skills.health / (float)skills.maxHealth);
         renderer.material.color = newColor;
     }
 }
