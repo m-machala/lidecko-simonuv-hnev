@@ -21,7 +21,6 @@ public class MeleeEnemy : MonoBehaviour, EnemyAI
         if(availablePositions.Count == 0) {
             return;
         }
-        //Checknout jestli trully fachá kdyžtak doimplementovat dál
         randomMovementChance = (float)Math.Clamp(0.1 + 0.8 * (1 - (character.GetComponent<Skills>().health / character.GetComponent<Skills>().maxHealth)), 0.03, 0.9);
         Debug.Log("Iskáp chance: " + randomMovementChance);
         float aa = UnityEngine.Random.Range(0f, 1f);

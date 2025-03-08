@@ -30,13 +30,13 @@ public class ActionSelection : MonoBehaviour
         Image meleBackg = GameObject.FindWithTag("MeleTag").GetComponent<Image>();
         Image rangedBackg = GameObject.FindWithTag("RangedTag").GetComponent<Image>();
         Image fireballBackg = GameObject.FindWithTag("FireballTag").GetComponent<Image>();
-        Image boltBackg = GameObject.FindWithTag("BoltTag").GetComponent<Image>();
+        //Image boltBackg = GameObject.FindWithTag("BoltTag").GetComponent<Image>();
         Image healBackg = GameObject.FindWithTag("HealTag").GetComponent<Image>();
 
         meleBackg.enabled = false;
         rangedBackg.enabled = false;
         fireballBackg.enabled = false;
-        boltBackg.enabled = false;
+        //boltBackg.enabled = false;
         healBackg.enabled = false;
 
         GameObject[] icons = GameObject.FindGameObjectsWithTag("IconTag");
@@ -79,8 +79,9 @@ public class ActionSelection : MonoBehaviour
         {
             if (((gameManager.player.GetComponent<Skills>().arrowCount <= 0) && (img.name == "Ranged")) ||
                 ((gameManager.player.GetComponent<Skills>().mana < gameManager.player.GetComponent<Skills>().fireballCost) && (img.name == "Fireball")) ||
-                ((gameManager.player.GetComponent<Skills>().mana < gameManager.player.GetComponent<Skills>().boltCost) && (img.name == "Bolt")) ||
-                ((gameManager.player.GetComponent<Skills>().mana < gameManager.player.GetComponent<Skills>().healCost) && (img.name == "Heal")))
+                //((gameManager.player.GetComponent<Skills>().mana < gameManager.player.GetComponent<Skills>().boltCost) && (img.name == "Bolt")) ||
+                ((gameManager.player.GetComponent<Skills>().mana < gameManager.player.GetComponent<Skills>().healCost) && (img.name == "Heal")) || 
+                ((gameManager.player.GetComponent<Skills>().health >= gameManager.player.GetComponent<Skills>().maxHealth) && (img.name == "Heal")))
             {
                 continue;
             }
@@ -94,13 +95,13 @@ public class ActionSelection : MonoBehaviour
         Image meleBackg = GameObject.FindWithTag("MeleTag").GetComponent<Image>();
         Image rangedBackg = GameObject.FindWithTag("RangedTag").GetComponent<Image>();
         Image fireballBackg = GameObject.FindWithTag("FireballTag").GetComponent<Image>();
-        Image boltBackg = GameObject.FindWithTag("BoltTag").GetComponent<Image>();
+        //Image boltBackg = GameObject.FindWithTag("BoltTag").GetComponent<Image>();
         Image healBackg = GameObject.FindWithTag("HealTag").GetComponent<Image>();
 
         meleBackg.enabled = false;
         rangedBackg.enabled = false;
         fireballBackg.enabled = false;
-        boltBackg.enabled = false;
+        //boltBackg.enabled = false;
         healBackg.enabled = false;
 
         Debug.Log(selectedIcon.name);
@@ -119,11 +120,11 @@ public class ActionSelection : MonoBehaviour
             fireballBackg.enabled = true;
             gameManager.player.GetComponent<Skills>().ToggleFireball();
         }
-        else if (selectedIcon.name == "Bolt")
+        /*else if (selectedIcon.name == "Bolt")
         {
             boltBackg.enabled = true;
             gameManager.player.GetComponent<Skills>().ToggleBolt();
-        }
+        }*/
         else if (selectedIcon.name == "Heal")
         {
             healBackg.enabled = true;

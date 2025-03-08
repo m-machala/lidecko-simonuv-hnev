@@ -5,30 +5,30 @@ using UnityEngine;
 
 public class Skills : MonoBehaviour
 {
-    public int meleeDamage = 7;
+    public int meleeDamage;
 
-    public int maxMana = 10;
-    public int mana = 10;
-    public int manaRegen = 1;
+    public int maxMana;
+    public int mana;
+    public int manaRegen;
 
 
-    public int maxHealth = 20;
-    public int health = 20;
-    public int healCost = 2;
-    public int healStrength = 5;
+    public int maxHealth;
+    public int health;
+    public int healCost;
+    public int healStrength;
 
-    public int arrowCount = 10;
-    public float arrowHitChance = 0.95f;
-    public int arrowDamage = 5;
+    public int arrowCount;
+    public float arrowHitChance;
+    public int arrowDamage;
 
-    public int fireballMainDamage = 10;
-    public int fireballSurroundingDamage = 5;
-    public int fireballCost = 5;
+    public int fireballMainDamage;
+    public int fireballSurroundingDamage;
+    public int fireballCost;
 
-    public int boltDamage = 3;
-    public int boltCost = 4;
+    public int boltDamage;
+    public int boltCost;
 
-    public AttackMode attackMode = AttackMode.Melee;
+    public AttackMode attackMode;
 
     public void Initialize(
         int meleeDamage = 7, int maxMana = 10, int mana = 10, int manaRegen = 1,
@@ -129,9 +129,10 @@ public class Skills : MonoBehaviour
     public void heal() {
         if (mana >= healCost) {
             audioSource.PlayOneShot(healing);
-            health += Math.Min(health + healStrength, maxHealth);
+            health = Math.Min(health + healStrength, maxHealth);
             mana -= healCost;
         }
+        Debug.Log("Livus maximaaaaaaaaaaaa: " + health);
     }
 
     public enum AttackMode
@@ -142,12 +143,6 @@ public class Skills : MonoBehaviour
         Bolt,
         Heal,
     }
-
-    /*public void ToggleAttackMode()
-    {
-        attackMode = (attackMode == AttackMode.Melee) ? AttackMode.Ranged : AttackMode.Melee;
-        Debug.Log("Attack mode switched to: " + attackMode);
-    }*/
 
     public void ToggleMele()
     {

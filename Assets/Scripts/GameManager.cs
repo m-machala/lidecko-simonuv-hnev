@@ -121,7 +121,7 @@ public class GameManager : MonoBehaviour
             enemyAnimator.SetTrigger("death"); 
         } else {
             enemyAnimator.SetTrigger("getHit");  
-        }                    
+        }
     }
 
     public void TileClicked(UnityEngine.Vector2 position) {
@@ -174,7 +174,7 @@ public class GameManager : MonoBehaviour
                 groundManager.UntintAllTiles();
                 float endWaitTime = 0f;
                 float offset = 0f;
-                
+
                 switch (attackMode) {
                     case AttackMode.Melee:
                         foreach (var enemy in enemies)
@@ -354,7 +354,7 @@ public class GameManager : MonoBehaviour
                 spearCounter.SetSpears(player.GetComponent<Skills>().arrowCount);
                 actionSelection.DisableIcons();
                 skipButton.DisableSkip();
-                Invoke("ActionComplete", endWaitTime);               
+                Invoke("ActionComplete", endWaitTime);
             }
         }
         Debug.Log(gameState);
@@ -437,6 +437,7 @@ public class GameManager : MonoBehaviour
         
         groundManager.SpawnTiles(15, 15, groundPrefabs, obstaclePrefabs, obstaclePositions);
         player.gameObject.AddComponent<Skills>();
+        player.GetComponent<Skills>().Initialize();
 
         var enemy = Instantiate(meleeEnemyPrefab, new UnityEngine.Vector3(1f, 1.2f, 1f), UnityEngine.Quaternion.identity);
         Skills skillsMele = enemy.GetComponent<Skills>();

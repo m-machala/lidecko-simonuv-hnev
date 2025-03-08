@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -6,7 +7,7 @@ public class ArcherEnemy : MonoBehaviour, EnemyAI
 {
     Animator animator;
     int movementRange = 2;
-    float randomMovementChance = 0.25f;
+    float randomMovementChance = 0.15f;
     public void move()
     {
         Debug.Log("ArcherEnemy: Enemy move");
@@ -19,7 +20,7 @@ public class ArcherEnemy : MonoBehaviour, EnemyAI
         if(availablePositions.Count == 0) {
             return;
         }
-        
+        randomMovementChance = (float)Math.Clamp(0.15 + 0.8 * (1 - (character.GetComponent<Skills>().health / character.GetComponent<Skills>().maxHealth)), 0.06, 0.9);
         var goal = availablePositions[0];
         if (UnityEngine.Random.Range(0f, 1f) <= randomMovementChance) {
             Debug.Log("ArcherEnemy: Moving randomly");
