@@ -9,7 +9,7 @@ public class MeleeEnemy : MonoBehaviour, EnemyAI
     Animator animator;
     public float attackRange = 1.5f; 
     int movementRange = 2;
-    float randomMovementChance = 0.25f;
+    float randomMovementChance = 0.10f;
     public void move() {
         Debug.Log("MeleeEnemy: Enemy move");
         var character = GetComponent<Character>();
@@ -21,9 +21,14 @@ public class MeleeEnemy : MonoBehaviour, EnemyAI
         if(availablePositions.Count == 0) {
             return;
         }
-        
+        //Checknout jestli trully fachá kdyžtak doimplementovat dál
+        randomMovementChance = (float)Math.Clamp(0.1 + 0.8 * (1 - (character.GetComponent<Skills>().health / character.GetComponent<Skills>().maxHealth)), 0.03, 0.9);
+        Debug.Log("Iskáp chance: " + randomMovementChance);
+        float aa = UnityEngine.Random.Range(0f, 1f);
+        Debug.Log("Random chance: " + aa);
+        Debug.Log(aa <= (randomMovementChance));
         var goal = availablePositions[0];
-        if (UnityEngine.Random.Range(0f, 1f) <= randomMovementChance) {
+        if (aa <= (randomMovementChance)) {
             Debug.Log("MeleeEnemy: Moving randomly");
             goal = availablePositions[UnityEngine.Random.Range(0, availablePositions.Count)];
         }
